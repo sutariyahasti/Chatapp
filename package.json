@@ -1,0 +1,32 @@
+{
+  "name": "backend_next",
+  "version": "0.1.0",
+  "private": true,
+  "proxy" :8080,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start PORT=8080",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "axios": "^1.7.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.5.0",
+    "mongoose": "^8.3.1",
+    "next": "14.1.4",
+    "next-connect": "^1.0.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-router-dom": "^6.23.1",
+    "socket.io-client": "^4.7.5"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0"
+  }
+}

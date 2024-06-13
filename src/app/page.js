@@ -25,8 +25,8 @@ console.log(users);
           <li key={user._id}>{user.name} - {user.email}</li>
         ))}
       </ul>
-      <a href="/LoginPage" className="mb-10 block font-bold text-gray-600">
-        Have an account? Login
+      <a href="/pages/Login" className="mb-10 block font-bold text-gray-600">
+        Have an Account? Login
       </a>
     </main>
   );

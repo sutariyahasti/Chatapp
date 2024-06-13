@@ -6,7 +6,7 @@ import Link from "next/link.js";
 function Rigthside({
   socket,
   UserDetail,
-  fetchUserById,
+  fetchChatRoomsById,
   loginuser,
   getprofile,
   profileuser,
@@ -45,13 +45,13 @@ function Rigthside({
         }
       }
     };
-    socket.on("message", (msg) => {
-      console.log(msg, "---------msg");
-      setChats((prevMessages) => [...prevMessages, msg]);
-    });
+    // socket.on("message", (msg) => {
+    //   console.log(msg, "---------msg");
+    //   setChats((prevMessages) => [...prevMessages, msg]);
+    // });
 
     fetchSendedChats();
-  }, [UserDetail, userChatNames, messages, socket]);
+  }, [UserDetail, userChatNames, messages]);
 
   const handleInputChange = (event) => {
     const { value } = event.target;
@@ -60,7 +60,7 @@ function Rigthside({
 
   const sendMessage = (message) => {
     // Emit a message to the server
-    socket.emit("messageResponse", message);
+    // socket.emit("messageResponse", message);
   };
 
   const handleSendMessage = async () => {

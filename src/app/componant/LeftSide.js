@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 const LeftSide = ({
   socket,
   allusers,
-  fetchUserById,
+  fetchChatRoomsById,
   loginuser,
   signeduser,
   fetchUser,
@@ -17,11 +17,11 @@ const LeftSide = ({
   const [open, setOpen] = useState(false);
 
   const url = process.env.NEXT_PUBLIC_API_URL;
-  console.log(loginuser,"loginuser");
+  // console.log(loginuser,"loginuser");
   useEffect(() => {
     const fetchUserschatrooms = async () => {
       const response = await fetch(
-        `${url}/api/chat/Chatrooms/` + loginuser?._id,
+        `${url}/api/getChatrooms`,
         {
           method: "get",
           headers: {
@@ -31,14 +31,15 @@ const LeftSide = ({
         }
       );
       const Users = await response.json();
-      setUsers(Users.chatRoom);
+      console.log(users,"users");
+      setUsers(Users);
       const loginUserId = loginuser?._id; // Assuming loginuser is an object with _id property
     };
+    console.log(signeduser,"signeduser");
     fetchUserschatrooms();
 
-    socket.on("newUserResponse", (data) => setUsers(data));
-    console.log(signeduser,"signeduser");
-  }, [socket, users]);
+    // socket.on("newUserResponse", (data) => setUsers(data));
+  }, []);
 
   const createChatroom = async (id, name) => {
     try {
@@ -46,6 +47,7 @@ const LeftSide = ({
         // `${url}/api/createchatroom`,
 `http://localhost:3000/api/createchatroom`,
         {
+          chatName : "hasti",
           user1Name: loginuser?.user?.name,
           user2Name: name,
           user1: loginuser?.user?._id,
@@ -59,7 +61,7 @@ const LeftSide = ({
         }
       );
       setOpen(false);
-      if ((response.status = 400)) {
+      if (response.status = 400) {
         alert("user already exist");
         setOpen(false);
       }
@@ -77,7 +79,7 @@ const LeftSide = ({
   };
 
   const fetchChatRoomsById = (id) => {
-    fetchUserById(id);
+    fetchChatRoomsById(id);
     fetchUser(
       UserDetail?.userChatNames[0]?.user1 === loginuser?._id
         ? UserDetail?.userChatNames[0].user2
@@ -101,7 +103,7 @@ const LeftSide = ({
         </div>
         <div className="flex flex-col leading-tight">
           <div className="text-2xl mt-1 flex items-center">
-            <span className="text-white mr-3">{loginuser?.name}</span>
+            <span className="text-white mr-1">{loginuser?.user?.name}</span>
           </div>
         </div>
         {/* model */}
@@ -229,10 +231,10 @@ const LeftSide = ({
               <div className="flex flex-1 items-center justify-between border-b-2 border-[#f3d2be]">
                 <div className="m-2">
                   <h5 className="font-medium text-black dark:text-white">
-                    {user?.chatName}
+                    {/* {user?.chatName} */}
                     {user?.user1 === loginuser?._id
-                      ? user.user2Name
-                      : user.user1Name}
+                      ? user.user1Name
+                      : user.user2Name}
                     {/* {allusers[0]?.name} */}
                   </h5>
 

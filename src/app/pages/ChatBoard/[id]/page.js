@@ -9,7 +9,7 @@ function ChatBoard() {
   const url = process.env.NEXT_PUBLIC_API_URL;
 
   // Initialize socket connection
-  const socket = socketIO.connect(`${url}`);
+  // const socket = socketIO.connect(`${url}`);
   const [messages, setMessages] = useState("");
   const [userName, setUsername] = useState();
   const [users, setUsers] = useState();
@@ -29,10 +29,10 @@ function ChatBoard() {
     }
 
     fetchSignedUser();
-    socket.on("messageResponse", (data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
-      //   setUnreadCount((prevCount) => prevCount + 1);
-    });
+    // socket.on("messageResponse", (data) => {
+    //   setMessages((prevMessages) => [...prevMessages, data]);
+    //   //   setUnreadCount((prevCount) => prevCount + 1);
+    // });
 
     // socket.on("notification", (message) => {
     //   // Show a browser notification if permission is granted
@@ -106,9 +106,9 @@ function ChatBoard() {
         {/* Left side */}
         <div className="md:col-span-1 rounded w-full overflow-auto">
           <LeftSide
-            socket={socket}
+            // socket={socket}
             allusers={users}
-            fetchUserById={fetchChatRoomsById}
+            fetchChatRoomsById={fetchChatRoomsById}
             loginuser={userName}
             signeduser={signeduser}
             fetchUser={fetchUserbyid}
@@ -120,9 +120,9 @@ function ChatBoard() {
         {/* Right side */}
         <div className="md:col-span-4 rounded w-full overflow-auto">
           <Rigthside
-            socket={socket}
+            // socket={socket}
             UserDetail={data}
-            fetchUserById={fetchChatRoomsById}
+            fetchChatRoomsById={fetchChatRoomsById}
             loginuser={userName}
             getprofile={fetchUserbyid}
             profileuser={users}

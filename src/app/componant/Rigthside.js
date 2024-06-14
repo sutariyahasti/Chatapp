@@ -5,7 +5,7 @@ import Link from "next/link.js";
 
 function Rigthside({
   socket,
-  UserDetail,
+  ChatRoomDetails,
   fetchChatRoomsById,
   loginuser,
   getprofile,
@@ -23,10 +23,10 @@ function Rigthside({
   const url = process.env.NEXT_PUBLIC_API_URL;
   useEffect(() => {
     const fetchSendedChats = async () => {
-      if (UserDetail?.userChatNames[0]?._id) {
+      if (ChatRoomDetails?._id) {
         try {
           const response = await axios.get(
-            `${url}/api/chat/AllChat/${UserDetail?.userChatNames[0]?._id}`,
+            `${url}/api/AllChat/${ChatRoomDetails?._id}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -38,7 +38,7 @@ function Rigthside({
           console.log(
             response.data.userChats,
             "sended chat------------------------------------------",
-            UserDetail?.userChatNames[0]?._id
+            ChatRoomDetails?._id
           );
         } catch (error) {
           console.error("Error fetching user chats:", error.messages);
@@ -51,7 +51,7 @@ function Rigthside({
     // });
 
     fetchSendedChats();
-  }, [UserDetail, userChatNames, messages]);
+  }, [ChatRoomDetails, userChatNames, messages]);
 
   const handleInputChange = (event) => {
     const { value } = event.target;
@@ -69,10 +69,10 @@ function Rigthside({
         const response = await axios.post(
           `${url}/api/chat`,
           {
-            chatRoom: UserDetail?.userChatNames[0]?._id,
+            chatRoom: ChatRoomDetails?._id,
             sender: loginuser?._id,
             content: messages,
-            chatName: UserDetail?.userChatNames[0]?.chatName,
+            chatName: ChatRoomDetails?.chatName,
           },
           {
             headers: {
@@ -127,7 +127,7 @@ function Rigthside({
         />
       )}
       <div className=" flex pb-2 sm:pb-6 justify-between  bg-white flex-col h-screen ">
-        {UserDetail && UserDetail?.userChatNames.length > 0 ? (
+        {ChatRoomDetails && ChatRoomDetails?.length > 0 ? (
           <>
             <div className="flex sm:items-center  fixed w-[80%] bg-[#5a5269] z-[5] justify-between p-6  border-b-2 border-gray-200">
               <div className="relative flex items-center space-x-4">
@@ -150,10 +150,10 @@ function Rigthside({
                 <div className="flex flex-col leading-tight">
                   <div className="text-2xl mt-1 flex items-center">
                     <span className="text-white mr-3">
-                      {/* {UserDetail && UserDetail?.userChatNames[0]?.chatName} */}
-                      {UserDetail?.userChatNames[0]?.user1 === loginuser?._id
-                        ? UserDetail?.userChatNames[0].user2Name
-                        : UserDetail?.userChatNames[0].user1Name}
+                      {/* {ChatRoomDetails && ChatRoomDetails?.chatName} */}
+                      {ChatRoomDetails?.user1 === loginuser?._id
+                        ? ChatRoomDetails?.user2Name
+                        : ChatRoomDetails?.user1Name}
                     </span>
                   </div>
                   <span className="text-lg text-white">Web Developer</span>
@@ -215,9 +215,9 @@ function Rigthside({
                   className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
                   onClick={() =>
                     getUserProfile(
-                      UserDetail?.userChatNames[0]?.user1 === loginuser?._id
-                        ? UserDetail?.userChatNames[0].user2
-                        : UserDetail?.userChatNames[0].user1
+                      ChatRoomDetails?.user1 === loginuser?._id
+                        ? ChatRoomDetails?.user2
+                        : ChatRoomDetails?.user1
                     )
                   }
                 >

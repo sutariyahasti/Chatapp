@@ -10,7 +10,7 @@ const LeftSide = ({
   loginuser,
   signeduser,
   fetchUser,
-  UserDetail,
+  ChatRoomDetails,
 }) => {
   const [users, setUsers] = useState([]);
   const [chatname, setChatname] = useState();
@@ -48,15 +48,15 @@ const LeftSide = ({
         }
       );
       const Users = await response.json();
-      console.log(users,"users");
       setUsers(Users);
       const loginUserId = loginuser?._id; // Assuming loginuser is an object with _id property
     };
     console.log(signeduser,"signeduser");
     fetchUserschatrooms();
-
+    
     // socket.on("newUserResponse", (data) => setUsers(data));
-  }, []);
+    }, []);
+  console.log(users,"users");
 
   const createChatroom = async (id, name) => {
     try {
@@ -67,7 +67,7 @@ const LeftSide = ({
           chatName : "hasti",
           user1Name: username,
           user2Name: name,
-          user1: userid,
+          user1: userId,
           user2: id,
         },
         {
@@ -78,7 +78,7 @@ const LeftSide = ({
         }
       );
       setOpen(false);
-      if (response.status = 400) {
+      if (response.status == 400) {
         alert("user already exist");
         setOpen(false);
       }
@@ -89,6 +89,28 @@ const LeftSide = ({
     }
   };
 
+  // const [chatroom, setChatroom] = useState(null);
+  // const [error, setError] = useState(null);
+  // console.log("chatroom",chatroom);
+  // const id = "666c03313d8db14984b7ad34"
+  //   useEffect(() => {
+  //     if (id) {
+  //         fetch(`http://localhost:3000/api/getChatroombyid?id=666c03313d8db14984b7ad34`)
+  //             .then((res) => res.json())
+  //             .then((data) => {
+  //                 if (data.error) {
+  //                     setError(data.error);
+  //                 } else {
+  //                     setChatroom(data);
+  //                 }
+  //             })
+  //             .catch((err) => {
+  //                 setError('An error occurred while fetching the chatroom');
+  //                 console.error('Error:', err);
+  //             });
+  //     }
+  // }, [id]);
+
   const handleInputChange = (event) => {
     const name = event.target.value;
     setChatname(name);
@@ -96,11 +118,11 @@ const LeftSide = ({
 
   const getChatRoomsById = (id) => {
     fetchChatRoomsById(id);
-    fetchUser(
-      UserDetail?.userChatNames[0]?.user1 === loginuser?._id
-        ? UserDetail?.userChatNames[0].user2
-        : UserDetail?.userChatNames[0].user1
-    );
+    // fetchUser(
+    //   ChatRoomDetails?.user1 === loginuser?._id
+    //     ? ChatRoomDetails.user2
+    //     : ChatRoomDetails.user1
+    // );
   };
   return (
     <div className="min-h-screen  col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
@@ -249,8 +271,8 @@ const LeftSide = ({
                   <h5 className="font-medium text-black dark:text-white">
                     {/* {user?.chatName} */}
                     {user?.user1 === userId
-                      ? user.user1Name
-                      : user.user2Name}
+                      ? user.user2Name
+                      : user.user1Name}
                     {/* {allusers[0]?.name} */}
                   </h5>
 

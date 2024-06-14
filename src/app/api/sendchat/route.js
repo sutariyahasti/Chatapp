@@ -25,7 +25,7 @@ export async function POST(req) {
         const result = await collection.insertOne(message);
 
         if (result.acknowledged) {
-            return new Response(JSON.stringify({ message: "Chat sent successfully" }), { status: 201 });
+            return new Response(JSON.stringify({ message: "Chat sent successfully", message }), { status: 201 });
         } else {
             return new Response(JSON.stringify({ error: 'Failed to send chat' }), { status: 500 });
         }

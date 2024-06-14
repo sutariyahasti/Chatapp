@@ -13,7 +13,6 @@ function Rigthside({
   messages,
   setMessages,
 }) {
-  //   const [message, setMessage] = useState("");
   const [inputvalue, setInputvalue] = useState([]);
   const [userChats, setUserChats] = useState([]);
   const [chats, setChats] = useState([]);
@@ -21,43 +20,66 @@ function Rigthside({
   const [currentDayLabel, setCurrentDayLabel] = useState("");
   const [profile, setProfile] = useState(false);
   const url = process.env.NEXT_PUBLIC_API_URL;
+  const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState("");
   useEffect(() => {
-    const fetchSendedChats = async () => {
-      if (ChatRoomDetails?._id) {
-        try {
-          const response = await axios.get(
-            `${url}/api/AllChat/${ChatRoomDetails?._id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
+    // Check if window is defined to ensure we're on the client-side
+    if (typeof window !== "undefined") {
+      const name = localStorage.getItem("name");
+      const id = localStorage.getItem("id");
 
-          setChats(response.data.userChats);
-          console.log(
-            response.data.userChats,
-            "sended chat------------------------------------------",
-            ChatRoomDetails?._id
-          );
-        } catch (error) {
-          console.error("Error fetching user chats:", error.messages);
+      if (name) {
+        setUsername(name);
+      }
+      if (id) {
+        setUserId(id);
+      }
+    }
+  }, [userId]);
+
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        const response = await axios.get(
+          `${url}/api/getAllChats`,
+          { params: { id: ChatRoomDetails?._id } },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setChats(response.data.userChats);
+        const data = await response.json();
+        if (response.status == 200) {
+          console.log("Fetched data:", data); // Debugging line
+          setChats(data.userChats);
+          setError(null);
+        } else {
+          setError(data.error || "An error occurred");
         }
+      } catch (err) {
+        setError("An error occurred while fetching the chat messages.");
+      } finally {
+        // setLoading(false);
       }
     };
-    // socket.on("message", (msg) => {
-    //   console.log(msg, "---------msg");
-    //   setChats((prevMessages) => [...prevMessages, msg]);
-    // });
 
-    fetchSendedChats();
-  }, [ChatRoomDetails, userChatNames, messages]);
+    if (ChatRoomDetails) {
+      fetchChats();
+    }
+  }, [ChatRoomDetails, messages]);
 
   const handleInputChange = (event) => {
     const { value } = event.target;
     setMessages(value);
   };
-
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
+  };
   const sendMessage = (message) => {
     // Emit a message to the server
     // socket.emit("messageResponse", message);
@@ -67,10 +89,10 @@ function Rigthside({
     if (messages) {
       try {
         const response = await axios.post(
-          `${url}/api/chat`,
+          `${url}/api/sendchat`,
           {
             chatRoom: ChatRoomDetails?._id,
-            sender: loginuser?._id,
+            sender: loginuser?._id || userId,
             content: messages,
             chatName: ChatRoomDetails?.chatName,
           },
@@ -82,7 +104,6 @@ function Rigthside({
           }
         );
 
-        console.log(response.data.message.content, "inputvalue", inputvalue);
         setInputvalue(response.data.message.content);
         sendMessage(response.data.message.content);
         setMessages("");
@@ -127,7 +148,7 @@ function Rigthside({
         />
       )}
       <div className=" flex pb-2 sm:pb-6 justify-between  bg-white flex-col h-screen ">
-        {ChatRoomDetails && ChatRoomDetails?.length > 0 ? (
+        {ChatRoomDetails && ChatRoomDetails?._id ? (
           <>
             <div className="flex sm:items-center  fixed w-[80%] bg-[#5a5269] z-[5] justify-between p-6  border-b-2 border-gray-200">
               <div className="relative flex items-center space-x-4">
@@ -139,10 +160,10 @@ function Rigthside({
                   </span>
 
                   <img
-                    src={`${url}/${
-                      profileuser && profileuser[0]?.pic
-                    }`}
-                    // src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
+                    // src={`${url}/${
+                    //   profileuser && profileuser[0]?.pic
+                    // }`}
+                    src="https://unsplash.com/photos/sunflower-field-during-day-time-lk3F07BN8T8"
                     alt="User"
                     className="rounded-full border border-white h-14 w-14"
                   />
@@ -151,7 +172,7 @@ function Rigthside({
                   <div className="text-2xl mt-1 flex items-center">
                     <span className="text-white mr-3">
                       {/* {ChatRoomDetails && ChatRoomDetails?.chatName} */}
-                      {ChatRoomDetails?.user1 === loginuser?._id
+                      {ChatRoomDetails?.user1 === userId
                         ? ChatRoomDetails?.user2Name
                         : ChatRoomDetails?.user1Name}
                     </span>
@@ -240,7 +261,7 @@ function Rigthside({
             </div>
             <div className=" relative top-20 w-full  flex  flex-col-reverse justify-between h-[82%] overflow-auto">
               <div className="flex flex-col mt-5">
-                <h1>
+                {/* <h1>
                   {chats && (
                     <span
                       className={`top-[500px] sticky text-gray-400 bg-black flex mx-2 justify-center`}
@@ -248,7 +269,7 @@ function Rigthside({
                       {day}
                     </span>
                   )}
-                </h1>
+                </h1> */}
                 <div className=" relative top-80 w-full px-5 text-center justify-between"></div>
                 {chats &&
                   chats.length > 0 &&
@@ -278,17 +299,17 @@ function Rigthside({
                         <div
                           key={index}
                           className={`flex mb-4 ${
-                            loginuser?._id === msg?.sender
+                            userId === msg?.sender
                               ? "justify-end"
                               : "justify-start"
                           }`}
                         >
-                          {loginuser?._id !== msg?.sender && (
+                          {userId !== msg?.sender && (
                             <img
-                              // src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
-                              src={`http://localhost:5000/${
-                                profileuser && profileuser[0]?.pic
-                              }`}
+                              src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
+                              // src={`http://localhost:5000/${
+                              //   profileuser && profileuser[0]?.pic
+                              // }`}
                               className="object-cover h-8 w-8 rounded-full m-2 mt-7"
                               alt=""
                             />
@@ -297,7 +318,7 @@ function Rigthside({
                             {dayTag && (
                               <span
                                 className={`text-xs text-gray-400 flex mx-2 ${
-                                  loginuser?._id === msg?.sender
+                                  userId === msg?.sender
                                     ? "justify-end"
                                     : "justify-start"
                                 }`}
@@ -307,7 +328,7 @@ function Rigthside({
                             )}
                             <div
                               className={`py-0 px-0 m-0  ${
-                                loginuser?._id === msg?.sender
+                                userId === msg?.sender
                                   ? "bg-[#e68e7f]  rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white flex flex-row"
                                   : "bg-gradient-to-tr from-slate-300 to-slate-200 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black flex flex-row"
                               }`}
@@ -323,9 +344,10 @@ function Rigthside({
                               </span>
                             </div>
                           </div>
-                          {loginuser?._id == msg?.sender && (
+                          {userId == msg?.sender && (
                             <img
-                              src={`http://localhost:5000/${loginuser?.pic}`}
+                              // src={`http://localhost:5000/${userId}`}
+                              src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
                               className="object-cover h-8 w-8 rounded-full m-2 mt-7"
                               alt=""
                             />
@@ -336,135 +358,6 @@ function Rigthside({
                   })}
               </div>
             </div>
-            {/* <div className="flex items-start gap-2.5">
-              <img
-                className="w-8 h-8 rounded-full"
-                src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
-                alt="Bonnie Green image"
-              />
-              <div className="flex flex-col gap-1">
-                <div className="flex flex-col w-full max-w-[326px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse mb-2">
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                      Bonnie Green
-                    </span>
-                    <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                      11:46
-                    </span>
-                  </div>
-                  <p className="text-sm font-normal text-gray-900 dark:text-white">
-                    This is the new office 3{" "}
-                  </p>
-                  <div className="group relative my-2.5">
-                    <div className="absolute w-full h-full bg-gray-900/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
-                      <button
-                        data-tooltip-target="download-image"
-                        className="inline-flex items-center justify-center rounded-full h-10 w-10 bg-white/30 hover:bg-white/50 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50"
-                      >
-                        <svg
-                          className="w-5 h-5 text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 16 18"
-                        >
-                          <path
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M8 1v11m0 0 4-4m-4 4L4 8m11 4v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3"
-                          />
-                        </svg>
-                      </button>
-                      <div
-                        id="download-image"
-                        role="tooltip"
-                        className="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
-                      >
-                        Download image
-                        <div className="tooltip-arrow" data-popper-arrow></div>
-                      </div>
-                    </div>
-                    <img
-                      src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
-                      className="rounded-lg"
-                    />
-                  </div>
-                  <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                    Delivered
-                  </span>
-                </div>
-              </div>
-              <button
-                id="dropdownMenuIconButton"
-                data-dropdown-toggle="dropdownDots"
-                data-dropdown-placement="bottom-start"
-                className="inline-flex self-center items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800 dark:focus:ring-gray-600"
-                type="button"
-              >
-                <svg
-                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 4 15"
-                >
-                  <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-                </svg>
-              </button>
-              <div
-                id="dropdownDots"
-                className="z-10 flex bg-white divide-y divide-gray-100 rounded-lg shadow w-40 dark:bg-gray-700 dark:divide-gray-600"
-              >
-                <ul
-                  className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="dropdownMenuIconButton"
-                >
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Reply
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Forward
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Copy
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Report
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Delete
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div> */}
-            ;
           </>
         ) : (
           <div className=" relative top-80 w-full px-5 text-center justify-between">
@@ -502,13 +395,7 @@ function Rigthside({
               className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-[#e4a69c] rounded-md py-3"
               value={messages}
               onChange={handleInputChange}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  // sendMessage(e.target.value);
-                  // e.target.value = "";
-                  handleSendMessage;
-                }
-              }}
+              onKeyDown={handleKeyDown}
             />
           </div>
           <div className="relative flex-2 right-0 items-center inset-y-0  sm:flex ">

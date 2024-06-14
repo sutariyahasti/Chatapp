@@ -15,8 +15,23 @@ const LeftSide = ({
   const [users, setUsers] = useState([]);
   const [chatname, setChatname] = useState();
   const [open, setOpen] = useState(false);
-  const username = localStorage.getItem("name")
-  const userid = localStorage.getItem("id")
+  const [username, setUsername] = useState('');
+  const [userId, setUserId] = useState("")
+
+  useEffect(() => {
+    // Check if window is defined to ensure we're on the client-side
+    if (typeof window !== 'undefined') {
+      const name = localStorage.getItem('name');
+      const id = localStorage.getItem("id")
+
+      if (name) {
+        setUsername(name);
+      }
+      if (id) {
+        setUserId(id)
+      }
+    }
+  }, []);
 
   const url = process.env.NEXT_PUBLIC_API_URL;
   // console.log(loginuser,"loginuser");
@@ -233,7 +248,7 @@ const LeftSide = ({
                 <div className="m-2">
                   <h5 className="font-medium text-black dark:text-white">
                     {/* {user?.chatName} */}
-                    {user?.user1 === userid
+                    {user?.user1 === userId
                       ? user.user1Name
                       : user.user2Name}
                     {/* {allusers[0]?.name} */}

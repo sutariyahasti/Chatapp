@@ -28,8 +28,9 @@ export async function POST(req) {
 
             // Generate JWT token
             const token = generateToken({ userId: insertedId });
+            const newUser = {name , email, password}
 
-            return new Response(JSON.stringify({ success: true, token, result }), { status: 201 });
+            return new Response(JSON.stringify({ success: true, token, result,newUser }), { status: 201 });
         } else {
             // Insertion failed
             console.error('Failed to insert user:', result);

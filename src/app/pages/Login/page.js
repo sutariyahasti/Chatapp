@@ -38,13 +38,13 @@ function Login() {
         },
       });
       const data = await response.json();
-      const receivedToken = data.token;
-      localStorage.setItem("token", receivedToken);
 
       if (response.status === 200) {
-        localStorage.setItem("LoginUserInfo", JSON.stringify(data));
-        localStorage.setItem("id", JSON.stringify(data.user._id));
-
+        localStorage.setItem("id", data.user._id);
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("name", data.user.name);
+        localStorage.setItem("email", data.user.email);
+        localStorage.setItem("password",data.user.password);
         router.push(`/pages/ChatBoard/${data.user._id}`);
         console.log("Login successful");
       } else {

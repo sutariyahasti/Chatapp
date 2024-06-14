@@ -25,7 +25,7 @@ function ChatBoard() {
     setUsername(parsedUser);
 
     if (!id) {
-      router.push("/LoginPage");
+      router.push("/pages/Login");
     }
 
     fetchSignedUser();

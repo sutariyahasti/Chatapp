@@ -15,6 +15,8 @@ const LeftSide = ({
   const [users, setUsers] = useState([]);
   const [chatname, setChatname] = useState();
   const [open, setOpen] = useState(false);
+  const username = localStorage.getItem("name")
+  const userid = localStorage.getItem("id")
 
   const url = process.env.NEXT_PUBLIC_API_URL;
   // console.log(loginuser,"loginuser");
@@ -48,9 +50,9 @@ const LeftSide = ({
 `http://localhost:3000/api/createchatroom`,
         {
           chatName : "hasti",
-          user1Name: loginuser?.user?.name,
+          user1Name: username,
           user2Name: name,
-          user1: loginuser?.user?._id,
+          user1: userid,
           user2: id,
         },
         {
@@ -74,11 +76,10 @@ const LeftSide = ({
 
   const handleInputChange = (event) => {
     const name = event.target.value;
-
     setChatname(name);
   };
 
-  const fetchChatRoomsById = (id) => {
+  const getChatRoomsById = (id) => {
     fetchChatRoomsById(id);
     fetchUser(
       UserDetail?.userChatNames[0]?.user1 === loginuser?._id
@@ -103,7 +104,7 @@ const LeftSide = ({
         </div>
         <div className="flex flex-col leading-tight">
           <div className="text-2xl mt-1 flex items-center">
-            <span className="text-white mr-1">{loginuser?.user?.name}</span>
+            <span className="text-white mr-1">{username}</span>
           </div>
         </div>
         {/* model */}
@@ -215,7 +216,7 @@ const LeftSide = ({
               // to={`/chat/${id}`}
               href={"#"}
               className="flex items-center gap-5 py-3 px-7.5 hover:bg-[#f3d2be] dark:hover:bg-[#f3d2be]"
-              onClick={() => fetchChatRoomsById(user?._id)}
+              onClick={() => getChatRoomsById(user?._id)}
               key={index}
             >
               <div className="relative h-14 w-14 rounded-full">
@@ -232,7 +233,7 @@ const LeftSide = ({
                 <div className="m-2">
                   <h5 className="font-medium text-black dark:text-white">
                     {/* {user?.chatName} */}
-                    {user?.user1 === loginuser?._id
+                    {user?.user1 === userid
                       ? user.user1Name
                       : user.user2Name}
                     {/* {allusers[0]?.name} */}

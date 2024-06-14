@@ -68,6 +68,7 @@ function ChatBoard() {
     setUsers(Users);
     console.log(Users, "signuser-----------");
   };
+  const [error, setError] = useState(null);
 
   const fetchChatRoomsById = async (id) => {
       if (id) {

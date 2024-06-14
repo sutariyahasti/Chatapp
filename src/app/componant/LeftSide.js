@@ -17,7 +17,7 @@ const LeftSide = ({
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState('');
   const [userId, setUserId] = useState("")
-
+  const [error, setError] = useState(null);
   useEffect(() => {
     // Check if window is defined to ensure we're on the client-side
     if (typeof window !== 'undefined') {
@@ -31,31 +31,46 @@ const LeftSide = ({
         setUserId(id)
       }
     }
-  }, []);
+  }, [userId]);
 
   const url = process.env.NEXT_PUBLIC_API_URL;
   // console.log(loginuser,"loginuser");
   useEffect(() => {
-    const fetchUserschatrooms = async () => {
-      const response = await fetch(
-        `${url}/api/getChatrooms`,
-        {
-          method: "get",
-          headers: {
-            "content-type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+    // const fetchUserschatrooms = async () => {
+    //   const response = await fetch(
+    //     `${url}/api/getChatrooms`,
+    //     {
+    //       method: "get",
+    //       headers: {
+    //         "content-type": "application/json",
+    //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+    //       },
+    //     }
+    //   );
+    //   const Users = await response.json();
+    //   setUsers(Users);
+    //   const loginUserId = loginuser?._id; // Assuming loginuser is an object with _id property
+    // };
+    // console.log(signeduser,"signeduser");
+    // fetchUserschatrooms();
+    const fetchUserschatroomsOfLoginUser = async () => {
+      axios.get(`/api/getChatroomofCurrentUser`, { params: { id : userId } })
+          .then((response) => {
+              const data = response.data;
+              if (data.error) {
+                  setError(data.error);
+              } else {
+                setUsers(data);
+              }
+          })
+          .catch((err) => {
+              setError('An error occurred while fetching the chatroom');
+              console.error('Error:', err);
+          });
         }
-      );
-      const Users = await response.json();
-      setUsers(Users);
-      const loginUserId = loginuser?._id; // Assuming loginuser is an object with _id property
-    };
-    console.log(signeduser,"signeduser");
-    fetchUserschatrooms();
-    
+        fetchUserschatroomsOfLoginUser()
     // socket.on("newUserResponse", (data) => setUsers(data));
-    }, []);
+    }, [userId]);
   console.log(users,"users");
 
   const createChatroom = async (id, name) => {

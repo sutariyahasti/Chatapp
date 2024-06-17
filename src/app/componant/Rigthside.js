@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import ProfilePage from "./ProfilePage.js";
 import Link from "next/link.js";
+import NoProfile from "@/public/images/noprofile.jsx";
 
 function Rigthside({
   socket,
@@ -22,17 +23,23 @@ function Rigthside({
   const url = process.env.NEXT_PUBLIC_API_URL;
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState("");
+  const [loginUserProfile, setLoginUserProfile] = useState(null);
+
   useEffect(() => {
     // Check if window is defined to ensure we're on the client-side
     if (typeof window !== "undefined") {
       const name = localStorage.getItem("name");
       const id = localStorage.getItem("id");
+      const profileImage = localStorage.getItem("url");
 
       if (name) {
         setUsername(name);
       }
       if (id) {
         setUserId(id);
+      }
+      if (profileImage) {
+        setLoginUserProfile(profileImage);
       }
     }
   }, [userId]);
@@ -159,14 +166,15 @@ function Rigthside({
                     </svg>
                   </span>
 
-                  <img
-                    // src={`${url}/${
-                    //   profileuser && profileuser[0]?.pic
-                    // }`}
-                    src="https://unsplash.com/photos/sunflower-field-during-day-time-lk3F07BN8T8"
-                    alt="User"
-                    className="rounded-full border border-white h-14 w-14"
-                  />
+                  {ChatRoomDetails.url ? (
+                    <img
+                      src={ChatRoomDetails && ChatRoomDetails.url}
+                      alt=""
+                      className="w-8 sm:w-16 h-10 sm:h-16 rounded-full border border-white"
+                    />
+                  ) : (
+                    <NoProfile />
+                  )}
                 </div>
                 <div className="flex flex-col leading-tight">
                   <div className="text-2xl mt-1 flex items-center">
@@ -181,7 +189,7 @@ function Rigthside({
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <Link
+                {/* <Link
                   href="/Blog"
                   className="inline-flex items-center justify-center rounded-lg border h-10 w-30 px-1 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
                 >
@@ -192,7 +200,7 @@ function Rigthside({
                   className="inline-flex items-center justify-center rounded-lg border h-10 w-30 px-1 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
                 >
                   Create Blog
-                </Link>
+                </Link> */}
                 <button
                   type="button"
                   className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
@@ -306,12 +314,9 @@ function Rigthside({
                         >
                           {userId !== msg?.sender && (
                             <img
-                              src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
-                              // src={`http://localhost:5000/${
-                              //   profileuser && profileuser[0]?.pic
-                              // }`}
+                              src={ChatRoomDetails.url}
                               className="object-cover h-8 w-8 rounded-full m-2 mt-7"
-                              alt=""
+                              alt="🙂"
                             />
                           )}
                           <div className={"flex flex-col"}>
@@ -346,10 +351,9 @@ function Rigthside({
                           </div>
                           {userId == msg?.sender && (
                             <img
-                              // src={`http://localhost:5000/${userId}`}
-                              src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
+                              src={loginUserProfile}
                               className="object-cover h-8 w-8 rounded-full m-2 mt-7"
-                              alt=""
+                              alt="🙂"
                             />
                           )}
                         </div>

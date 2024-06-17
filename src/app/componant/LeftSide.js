@@ -1,3 +1,4 @@
+import NoProfile from "@/public/images/noprofile";
 import axios from "axios";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -18,11 +19,15 @@ const LeftSide = ({
   const [username, setUsername] = useState('');
   const [userId, setUserId] = useState("")
   const [error, setError] = useState(null);
+  const [Profile, setProfile] = useState(null);
+
   useEffect(() => {
     // Check if window is defined to ensure we're on the client-side
     if (typeof window !== 'undefined') {
       const name = localStorage.getItem('name');
       const id = localStorage.getItem("id")
+      const profileImage = localStorage.getItem("url")
+
 
       if (name) {
         setUsername(name);
@@ -30,9 +35,35 @@ const LeftSide = ({
       if (id) {
         setUserId(id)
       }
+      if (profileImage) {
+        setProfile(profileImage)
+      }
     }
   }, [userId]);
 
+//   const [userProfile, setUseraProfile] = useState(null);
+// console.log(userProfile,"image");
+//   const fetchUserData = async () => {
+//       try {
+//           const response = await fetch(`/api/getImagebyUserid?id=${userId}`);
+//           if (!response.ok) {
+//               throw new Error('Failed to fetch user data');
+//           }
+//           const data = await response.json();
+//           if (data.error) {
+//               throw new Error(data.error);
+//           }
+//           setUseraProfile(data);
+//           setError(null);
+//       } catch (error) {
+//           console.error('Error fetching user:', error.message);
+//           setError('Failed to fetch user data');
+//           // setUseraProfile(null);
+//       }
+//   };
+//   useEffect(()=>{
+//     fetchUserData()
+//   },[userId])
   const url = process.env.NEXT_PUBLIC_API_URL;
   // console.log(loginuser,"loginuser");
   useEffect(() => {
@@ -70,10 +101,10 @@ const LeftSide = ({
         }
         fetchUserschatroomsOfLoginUser()
     // socket.on("newUserResponse", (data) => setUsers(data));
-    }, [userId]);
+    }, [userId,open]);
   console.log(users,"users");
 
-  const createChatroom = async (id, name) => {
+  const createChatroom = async (id, name,url) => {
     try {
       const response = await axios.post(
         // `${url}/api/createchatroom`,
@@ -84,6 +115,7 @@ const LeftSide = ({
           user2Name: name,
           user1: userId,
           user2: id,
+          url:url
         },
         {
           headers: {
@@ -104,27 +136,6 @@ const LeftSide = ({
     }
   };
 
-  // const [chatroom, setChatroom] = useState(null);
-  // const [error, setError] = useState(null);
-  // console.log("chatroom",chatroom);
-  // const id = "666c03313d8db14984b7ad34"
-  //   useEffect(() => {
-  //     if (id) {
-  //         fetch(`http://localhost:3000/api/getChatroombyid?id=666c03313d8db14984b7ad34`)
-  //             .then((res) => res.json())
-  //             .then((data) => {
-  //                 if (data.error) {
-  //                     setError(data.error);
-  //                 } else {
-  //                     setChatroom(data);
-  //                 }
-  //             })
-  //             .catch((err) => {
-  //                 setError('An error occurred while fetching the chatroom');
-  //                 console.error('Error:', err);
-  //             });
-  //     }
-  // }, [id]);
 
   const handleInputChange = (event) => {
     const name = event.target.value;
@@ -148,11 +159,15 @@ const LeftSide = ({
               <circle cx="8" cy="8" r="8" fill="currentColor"></circle>
             </svg>
           </span>
+          {Profile ? 
           <img
-            src={`http://localhost:5000/${loginuser?.pic}`}
+            src={Profile && Profile}
             alt=""
-            className="w-10 sm:w-16   h-10 sm:h-16 rounded-full border border-white"
-          />
+            className="w-16 sm:w-16   h-16 sm:h-16 rounded-full border border-white"
+          /> 
+          : <NoProfile />
+        }
+         
         </div>
         <div className="flex flex-col leading-tight">
           <div className="text-2xl mt-1 flex items-center">
@@ -213,13 +228,13 @@ const LeftSide = ({
                           // to={`/chat/${id}`}
                           href={"#"}
                           className="flex items-center  gap-5 py-3 px-7.5 hover:bg-[#f3d2be] dark:hover:bg-purple-100"
-                          onClick={() => createChatroom(user?._id, user?.name)}
+                          onClick={() => createChatroom(user?._id, user?.name, user?.url)}
                           key={index}
                         >
                           <div className="relative m-2 h-14 w-14 rounded-full">
                             <img
                               // src="https://images.unsplash.com/photo-1547093841-7c02540c29e9?w=300&h=300&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8Nnw3ODcyMzF8fGVufDB8fHx8fA%3D%3D"
-                              src={`http://localhost:5000/${user?.pic}`}
+                              src={`${user?.url}`}
                               alt="User"
                               className="rounded-full h-14 w-14"
                             />
@@ -272,12 +287,13 @@ const LeftSide = ({
               key={index}
             >
               <div className="relative h-14 w-14 rounded-full">
-                <img
-                  src="https://images.unsplash.com/photo-1547093841-7c02540c29e9?w=300&h=300&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8Nnw3ODcyMzF8fGVufDB8fHx8fA%3D%3D"
-                  //   src={`http://localhost:5000/${allusers[0]?.pic}`}
-                  alt="User"
-                  className="rounded-full h-14 w-14"
-                />
+              {user?.url ? 
+          <img
+            src={user?.url}
+            alt=""
+            className="w-8 sm:w-16 h-10 sm:h-16 rounded-full border border-white"
+          /> : <NoProfile />
+        }
                 <span className="absolute right-0 bottom-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-meta-3"></span>
               </div>
 

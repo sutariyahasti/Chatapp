@@ -4,9 +4,9 @@ import generateToken from '@/app/config/jwtConfig';
 
 export async function POST(req) {
     try {
-        const { name, email, password } = await req.json();
+        const { name, email, password, url } = await req.json();
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !url) {
             return new Response(JSON.stringify({ error: 'Name, email, and password are required' }), { status: 400 });
         }
 
@@ -20,7 +20,7 @@ export async function POST(req) {
             return new Response(JSON.stringify({ error: 'Email is already in use' }), { status: 409 });
         }
 
-        const result = await collection.insertOne({ name, email, password });
+        const result = await collection.insertOne({ name, email, password,url });
 
         if (result.acknowledged) {
             // Insertion was successful
@@ -28,7 +28,7 @@ export async function POST(req) {
 
             // Generate JWT token
             const token = generateToken({ userId: insertedId });
-            const newUser = {name , email, password}
+            const newUser = {name , email, password, url}
 
             return new Response(JSON.stringify({ success: true, token, result,newUser }), { status: 201 });
         } else {

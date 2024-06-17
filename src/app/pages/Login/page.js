@@ -45,7 +45,11 @@ function Login() {
         localStorage.setItem("name", data.user.name);
         localStorage.setItem("email", data.user.email);
         localStorage.setItem("password",data.user.password);
+        localStorage.setItem("url",data.user.url);
+
         router.push(`/pages/ChatBoard/${data.user._id}`);
+      // router.push(`/pages/profileupload/${data.user._id}`);
+
         console.log("Login successful");
       } else {
         alert("Login failed. Please check your credentials.");

@@ -3,9 +3,9 @@ import { ObjectId } from 'mongodb';
 
 export async function POST(req) {
     try {
-        const { chatName, user1, user2, user1Name, user2Name } = await req.json();
+        const { chatName, user1, user2, user1Name, user2Name,url } = await req.json();
 console.log();
-        if (!user1 || !user2 || !user1Name || !user2Name) {
+        if (!user1 || !user2 || !user1Name || !user2Name || !url) {
             return new Response(JSON.stringify({ error: 'All fields are required' }), { status: 400 });
         }
 
@@ -31,6 +31,7 @@ console.log();
             user2,
             user1Name,
             user2Name,
+            url,
             createdAt: new Date(),
             updatedAt: new Date(),
         };

@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { useEdgeStore } from "@/app/lib/edgestore";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -12,6 +13,43 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  // image upload
+  const [file, setFile] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [urls, setUrls] = useState();
+  const [loading, setLoading] = useState(false);
+  const { edgestore } = useEdgeStore();
+  console.log(urls?.url, "urls?.url");
+
+  const handleFileChange = (event) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (file) {
+      setLoading(true); 
+      console.log("Uploading:", file.name);
+      const res = await edgestore.publicFiles.upload({
+        file,
+        onProgressChange: (progress) => {
+          setProgress(progress);
+        },
+      });
+      console.log(res);
+      setUrls({
+        url: res.url,
+        thumbnailUrl: res.thumbnailUrl,
+      });
+      setLoading(false); 
+    }
+  };
+
+  useEffect(() => {
+    handleUpload();
+  }, [file]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,11 +61,10 @@ const Signup = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, url: urls && urls.url }),
     });
 
     const data = await response.json();
-    console.log(data.result.insertedId,"data",response,"-------",data);
     const receivedToken = data.token;
 
     if (response.status === 201) {
@@ -40,9 +77,13 @@ const Signup = () => {
       localStorage.setItem("name", name);
       localStorage.setItem("email", email);
       localStorage.setItem("password", password);
+      localStorage.setItem("url", urls.url);
 
-      router.push(`/pages/ChatBoard/${data.result.insertedId}`);
-
+      if (file) {
+        router.push(`/pages/ChatBoard/${data.result.insertedId}`);
+      } else {
+        router.push(`/pages/profileupload/${data.result.insertedId}`);
+      }
     } else {
       setError(data.error);
     }
@@ -115,7 +156,7 @@ const Signup = () => {
             value={email}
           />
         </div>
-        <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+        <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 text-gray-400"
@@ -138,27 +179,43 @@ const Signup = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <div className="flex items-center border-2 py-2 px-3 rounded-2xl my-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-gray-400"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-              clipRule="evenodd"
-            />
-          </svg>
-          {/* <input
-            className="pl-2 outline-none border-none"
-            type="file"
-            name="pic"
-            id="pic"
-            onChange={handleImageChange}
-          /> */}
+        <div className="flex items-center justify-center w-full rounded-2xl my-4">
+          <label className="flex flex-col rounded-lg border-4 w-full border-dashed p-10 group text-center">
+            <div className="text-center flex flex-col items-center justify-center">
+              <p className="pointer-none text-gray-500">
+                <a href="#" className="text-blue-600 hover:underline">
+                  Upload profile
+                </a>
+              </p>
+            </div>
+            <input type="file" className="hidden" onChange={handleFileChange} />
+          </label>
         </div>
+        <div className="h-[6px] w-44 border rounded overflow-hidden mt-4 mx-auto">
+          <div
+            className="h-full bg-blue-500 transition-all duration-150 text-white"
+            style={{
+              width: `${progress}%`,
+            }}
+          />
+        </div>
+        {loading && ( 
+          <div className="text-center text-gray-700 my-2">Uploading image...</div>
+        )}
+        {urls && urls?.url && (
+          <div className="flex m-2">
+            <img
+              src={urls.url}
+              alt=""
+              className="w-20 h-20 rounded-full border border-white"
+            />
+            {file && (
+              <div className="m-4 text-gray-700 text-center">
+                Selected file: {file.name}
+              </div>
+            )}
+          </div>
+        )}
         <button
           className="block w-full bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2"
           onClick={handleSubmit}

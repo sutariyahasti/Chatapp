@@ -18,8 +18,8 @@ function ChatBoard() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [chatRoomDetails, setChatRoomDetails] = useState();
   const router = useRouter();
-
-  useEffect(() => {
+  
+    useEffect(() => {
     const user = localStorage.getItem("LoginUserInfo");
     const parsedUser = user ? JSON.parse(user) : null;
     const id = localStorage.getItem("id");
@@ -29,7 +29,7 @@ function ChatBoard() {
       router.push("/pages/Login");
     }
 
-    fetchSignedUser();
+    // fetchSignedUser();
     // socket.on("messageResponse", (data) => {
     //   setMessages((prevMessages) => [...prevMessages, data]);
     //   //   setUnreadCount((prevCount) => prevCount + 1);
@@ -52,7 +52,12 @@ function ChatBoard() {
     //   socket.disconnect();
     // };
   }, [messages]);
+  useEffect(()=>{
+    fetchSignedUser();
+
+  },[])
   const fetchUserbyid = async (id) => {
+    console.log(id,"id----------chat");
     const response = await fetch(
       `${url}/api/alluser/` + id,
 

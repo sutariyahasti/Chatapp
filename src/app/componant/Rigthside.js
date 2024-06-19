@@ -87,10 +87,6 @@ function Rigthside({
       handleSendMessage();
     }
   };
-  const sendMessage = (message) => {
-    // Emit a message to the server
-    // socket.emit("messageResponse", message);
-  };
 
   const handleSendMessage = async () => {
     if (messages) {
@@ -166,9 +162,11 @@ function Rigthside({
                     </svg>
                   </span>
 
-                  {ChatRoomDetails.url ? (
+                  {ChatRoomDetails.user2url || ChatRoomDetails.user1url ? (
                     <img
-                      src={ChatRoomDetails && ChatRoomDetails.url}
+                      src={ChatRoomDetails?.user1 === userId
+                        ? ChatRoomDetails.user2url
+                        : ChatRoomDetails.user1url}
                       alt=""
                       className="w-8 sm:w-16 h-10 sm:h-16 rounded-full border border-white"
                     />
@@ -179,7 +177,6 @@ function Rigthside({
                 <div className="flex flex-col leading-tight">
                   <div className="text-2xl mt-1 flex items-center">
                     <span className="text-white mr-3">
-                      {/* {ChatRoomDetails && ChatRoomDetails?.chatName} */}
                       {ChatRoomDetails?.user1 === userId
                         ? ChatRoomDetails?.user2Name
                         : ChatRoomDetails?.user1Name}
@@ -244,7 +241,7 @@ function Rigthside({
                   className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
                   onClick={() =>
                     getUserProfile(
-                      ChatRoomDetails?.user1 === loginuser?._id
+                      ChatRoomDetails?.user1 === userId
                         ? ChatRoomDetails?.user2
                         : ChatRoomDetails?.user1
                     )

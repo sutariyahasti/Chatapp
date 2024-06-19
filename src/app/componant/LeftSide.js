@@ -99,7 +99,9 @@ const LeftSide = ({
               console.error('Error:', err);
           });
         }
-        fetchUserschatroomsOfLoginUser()
+        if (userId) {
+          fetchUserschatroomsOfLoginUser()
+        }
     // socket.on("newUserResponse", (data) => setUsers(data));
     }, [userId,open]);
   console.log(users,"users");
@@ -115,7 +117,8 @@ const LeftSide = ({
           user2Name: name,
           user1: userId,
           user2: id,
-          url:url
+          user1url:Profile,
+          user2url:url
         },
         {
           headers: {
@@ -287,9 +290,11 @@ const LeftSide = ({
               key={index}
             >
               <div className="relative h-14 w-14 rounded-full">
-              {user?.url ? 
+              {user.user2url || user.user1url ? 
           <img
-            src={user?.url}
+            src={user?.user1 === userId
+              ? user.user2url
+              : user.user1url}
             alt=""
             className="w-8 sm:w-16 h-10 sm:h-16 rounded-full border border-white"
           /> : <NoProfile />

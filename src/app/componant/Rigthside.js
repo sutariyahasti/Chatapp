@@ -123,20 +123,30 @@ function RightSide({
     getprofile(id);
     setProfile(true);
   };
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
 
-  const getDayTag = (msgDate, currentDate) => {
-    const differenceInDays = Math.floor(
-      (currentDate - msgDate) / (24 * 60 * 60 * 1000)
-    );
-
-    if (differenceInDays === 0) {
+    if (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    ) {
       return "Today";
-    } else if (differenceInDays === 1) {
+    } else if (
+      date.getDate() === yesterday.getDate() &&
+      date.getMonth() === yesterday.getMonth() &&
+      date.getFullYear() === yesterday.getFullYear()
+    ) {
       return "Yesterday";
-    } else if (differenceInDays < 7) {
-      return msgDate.toLocaleDateString("en-IN", { weekday: "long" });
     } else {
-      return msgDate.toLocaleDateString("en-IN");
+      // Manually format the date as dd MMM yyyy
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = date.toLocaleString("en-US", { month: "short" });
+      const year = date.getFullYear();
+      return `${day} ${month} ${year}`;
     }
   };
 
@@ -296,12 +306,20 @@ function RightSide({
                         weekday: "long",
                       });
                     } else {
-                
                       dayTag = msgDate.toLocaleDateString("en-IN");
                     }
 
                     return (
                       <>
+                        <div className="mt-4 flex justify-center  ">
+                          {(index === 0 ||
+                            formatDate(chats[index - 1]?.createdAt) !==
+                              formatDate(msg.createdAt)) && (
+                            <div className="bg-[#1a1615] text-white py-1 px-4 rounded-3xl">
+                              {formatDate(msg.createdAt)}
+                            </div>
+                          )}
+                        </div>
                         <div
                           key={index}
                           className={`flex mb-4 ${

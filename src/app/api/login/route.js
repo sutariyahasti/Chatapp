@@ -1,5 +1,5 @@
 import clientPromise from "@/app/config/db";
-import generateToken from "@/app/config/jwtConfig";
+import {generateToken} from "@/app/config/jwtConfig";
 
 export async function POST(req) {
     try {

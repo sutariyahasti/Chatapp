@@ -1,7 +1,7 @@
 import clientPromise from "@/app/config/db";
 import { generateToken } from "@/app/config/jwtConfig";
 
-export const maxDuration = 15;
+export const maxDuration = 5;
 
 export async function POST(req) {
     try {

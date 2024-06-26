@@ -10,7 +10,6 @@ console.log('MongoDB URI:', uri); // Add logging to check if the URI is being re
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    poolSize: 10, 
 };
 
 let client;

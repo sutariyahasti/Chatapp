@@ -14,7 +14,7 @@ export async function POST(req) {
         const client = await clientPromise;
         const db = client.db();
         const collection = db.collection('users');
-
+        console.time('Fetch Users');
         // Find user by email
         const user = await collection.findOne({ email });
 

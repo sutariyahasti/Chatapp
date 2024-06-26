@@ -66,23 +66,23 @@ const Signup = () => {
 
     const data = await response.json();
     const receivedToken = data.token;
-
+console.log(data,"data",response);
     if (response.status === 201) {
       setSuccess("User registered successfully!");
       setName("");
       setEmail("");
       setPassword("");
       localStorage.setItem("token", receivedToken);
-      localStorage.setItem("id", data.result.insertedId);
+      localStorage.setItem("id", data.newUser.insertedId);
       localStorage.setItem("name", name);
       localStorage.setItem("email", email);
       localStorage.setItem("password", password);
       localStorage.setItem("url", urls.url);
 
       if (file) {
-        router.push(`/pages/ChatBoard/${data.result.insertedId}`);
+        router.push(`/pages/ChatBoard/${data.newUser.insertedId}`);
       } else {
-        router.push(`/pages/profileupload/${data.result.insertedId}`);
+        router.push(`/pages/profileupload/${data.newUser.insertedId}`);
       }
     } else {
       setError(data.error);

@@ -5,6 +5,7 @@ if (!process.env.NEXT_MONGODB_URI) {
 }
 
 const uri = process.env.NEXT_MONGODB_URI;
+// const uri = 'mongodb+srv://hastisutariya01:Nikenpatel%4016@hasti.ihuymup.mongodb.net/ChatAppData';
 console.log(process.env.NEXT_MONGODB_URI, "NEXT_MONGODB_URI");
 const options = {};
 

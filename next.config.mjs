@@ -1,4 +1,11 @@
+// next.config.js
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+    env: {
+        MONGODB_URI: process.env.MONGODB_URI,
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    },
+};
 
 export default nextConfig;

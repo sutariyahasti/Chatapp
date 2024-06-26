@@ -29,7 +29,7 @@ function Login() {
       password: formData.password,
     };
     try {
-      const response = await fetch(`${url}/api/login`, {
+      const response = await fetch(`/api/login`, {
         method: "POST",
         body: JSON.stringify(loginData),
         headers: {

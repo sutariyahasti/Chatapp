@@ -1,5 +1,7 @@
 import clientPromise from "@/app/config/db";
-import {generateToken} from "@/app/config/jwtConfig";
+import { generateToken } from "@/app/config/jwtConfig";
+
+export const maxDuration = 15;
 
 export async function POST(req) {
     try {
@@ -29,7 +31,7 @@ export async function POST(req) {
         const token = generateToken({ userId: user._id });
 
         // Authentication successful, return JWT token
-        return new Response(JSON.stringify({ success: true, token,user }), { status: 200 });
+        return new Response(JSON.stringify({ success: true, token, user }), { status: 200 });
     } catch (error) {
         console.error('Error processing login request:', error);
         return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });

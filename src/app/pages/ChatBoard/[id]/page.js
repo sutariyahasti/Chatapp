@@ -74,7 +74,7 @@ function ChatBoard() {
   const fetchUserbyid = async (id) => {
     console.log(id,"id----------chat");
     const response = await fetch(
-      `${url}/api/alluser/` + id,
+      `/api/alluser/` + id,
 
       {
         method: "get",
@@ -113,7 +113,7 @@ function ChatBoard() {
 
   const fetchSignedUser = async () => {
     const response = await fetch(
-      `${url}/api/alluser`,
+      `/api/alluser`,
 
       {
         method: "get",

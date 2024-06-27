@@ -11,7 +11,15 @@ export async function POST(req) {
             return new Response(JSON.stringify({ error: 'Email and password are required' }), { status: 400 });
         }
 
-        const client = await clientPromise;
+        // Verify database connection
+        let client;
+        try {
+            client = await clientPromise;
+            console.log('MongoDB connection successful');
+        } catch (error) {
+            console.error('MongoDB connection failed:', error);
+            return new Response(JSON.stringify({ error: 'Database connection error' }), { status: 500 });
+        }
         const db = client.db();
         const collection = db.collection('users');
 

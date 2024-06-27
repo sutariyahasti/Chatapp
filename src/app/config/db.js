@@ -8,8 +8,7 @@ const uri = process.env.NEXT_MONGODB_URI;
 console.log('MongoDB URI:', uri); // Add logging to check if the URI is being read correctly
 
 const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    
 };
 
 let client;

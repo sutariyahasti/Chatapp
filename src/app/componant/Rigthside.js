@@ -161,7 +161,7 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
           profileuser={profileuser}
         />
       )}
-     <div className="flex flex-col h-screen bg-white">
+     <div className="flex flex-col h-screen bg-white xl:col-span-6 sm:col-span-6">
   {ChatRoomDetails && ChatRoomDetails._id ? (
     <>
       {/* ChatHeader */}
@@ -174,7 +174,7 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
       </div>
 
       {/* chatwindow */}
-      <div className="flex flex-col-reverse justify-between h-[80%] overflow-auto">
+      <div className="flex flex-col-reverse justify-between h-[81%] overflow-auto">
         <div className="flex flex-col mt-5">
           <div className="w-full px-5 text-center justify-between"></div>
           {chats &&
@@ -273,8 +273,8 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
       
 
       {/* sendchat */}
-      <div className="h-[8%] border-t-2 bg-white border-gray-200 pt-4 px-2 mb-2 flex flex-row fixed bottom-0 w-full">
-        <div className="relative flex-1 w-full">
+      <div className="h-[7%] border-t-2 bg-white border-gray-200 pt-4 px-2 mb-2 flex flex-row fixed bottom-0 w-[80%]">
+        <div className="relative flex-1 ">
           <span className="absolute inset-y-0 flex items-center">
             <button
               type="button"
@@ -326,7 +326,6 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
               ></path>
             </svg>
           </button>
-
           <button
             type="button"
             className="inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"

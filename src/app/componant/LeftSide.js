@@ -15,14 +15,14 @@ const LeftSide = ({
 }) => {
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [userId, setUserId] = useState("");
   const [error, setError] = useState(null);
   const [Profile, setProfile] = useState(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const name = localStorage.getItem('name');
+    if (typeof window !== "undefined") {
+      const name = localStorage.getItem("name");
       const id = localStorage.getItem("id");
       const profileImage = localStorage.getItem("url");
 
@@ -42,7 +42,8 @@ const LeftSide = ({
 
   useEffect(() => {
     const fetchUserschatroomsOfLoginUser = async () => {
-      axios.get(`/api/getChatroomofCurrentUser`, { params: { id: userId } })
+      axios
+        .get(`/api/getChatroomofCurrentUser`, { params: { id: userId } })
         .then((response) => {
           const data = response.data;
           if (data.error) {
@@ -52,10 +53,10 @@ const LeftSide = ({
           }
         })
         .catch((err) => {
-          setError('An error occurred while fetching the chatroom');
-          console.error('Error:', err);
+          setError("An error occurred while fetching the chatroom");
+          console.error("Error:", err);
         });
-    }
+    };
     if (userId) {
       fetchUserschatroomsOfLoginUser();
     }
@@ -73,7 +74,7 @@ const LeftSide = ({
           user1: userId,
           user2: id,
           user1url: Profile,
-          user2url: url
+          user2url: url,
         },
         {
           headers: {
@@ -83,8 +84,8 @@ const LeftSide = ({
         }
       );
       setOpen(false);
-      if (response.status === 400) {
-        alert("user already exist");
+      if (response.status === 201) {
+        alert("user created");
         setOpen(false);
       }
       console.log(response, response.status, "rooms", chatname);
@@ -100,29 +101,25 @@ const LeftSide = ({
 
   return (
     <div className="min-h-screen col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-6 sm:col-span-6">
-      <div className="sticky top-0 flex items-center space-x-4 bg-[#5a5269] z-10 sm:items-center justify-between p-6 border-b-2 border-gray-200">
-        <div className="relative">
-          <span className="absolute text-green-500 right-0 bottom-0">
-            <svg width="20" height="20">
-              <circle cx="8" cy="8" r="8" fill="currentColor"></circle>
-            </svg>
-          </span>
+      <div className="sticky top-0 flex items-center space-x-4 bg-[#5a5269] z-10 sm:items-center justify-between py-6 px-2 border-b-2 border-gray-200">
+        <div className="relative h-15 w-15 rounded-full">
           {Profile ? (
             <img
               src={Profile && Profile}
               alt=""
-              className="w-16 sm:w-16 h-16 sm:h-16 rounded-full border border-white"
+              className="w-10 sm:w-16 h-10 sm:h-16 rounded-full border border-white"
             />
           ) : (
             <NoProfile />
           )}
+          <span className="absolute right-2 bottom-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-meta-3"></span>
         </div>
         <div className="flex flex-col leading-tight">
           <div className="text-2xl mt-1 flex items-center">
-            <span className="text-white mr-1">{username}</span>
+            <span className="text-white">{username}</span>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center ">
           {open && (
             <CreateChatRoomModal
               signeduser={signeduser}
@@ -142,41 +139,43 @@ const LeftSide = ({
         </div>
       </div>
       <div className="overflow-auto h-full">
-        {users && users.length > 0 && users.map((user, index) => (
-          <Link
-            href={"#"}
-            className="flex items-center gap-1 py-3 px-7.5 hover:bg-[#f3d2be] dark:hover:bg-[#f3d2be]"
-            onClick={() => getChatRoomsById(user._id)}
-            key={index}
-          >
-            <div className="relative h-15 w-15 rounded-full">
-              {user.user2url || user.user1url ? (
-                <img
-                  src={user.user1 === userId ? user.user2url : user.user1url}
-                  alt=""
-                  className="w-10 sm:w-16 h-10 sm:h-16 rounded-full border border-white"
-                />
-              ) : (
-                <NoProfile />
-              )}
-              <span className="absolute right-2 bottom-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-meta-3"></span>
-            </div>
-            <div className="flex flex-1 items-center justify-between border-b-2 border-[#f3d2be]">
-              <div className="m-2">
-                <h5 className="font-medium text-black dark:text-white">
-                  {user.user1 === userId ? user.user2Name : user.user1Name}
-                </h5>
-                <p className="flex items-center text-xs text-black dark:text-white">
-                  Hello, how are you?
-                  <span className="ml-1 text-xs">. 12 min</span>
-                </p>
+        {users &&
+          users.length > 0 &&
+          users.map((user, index) => (
+            <Link
+              href={"#"}
+              className="flex items-center gap-1 py-3 px-7.5 hover:bg-[#f3d2be] dark:hover:bg-[#f3d2be]"
+              onClick={() => getChatRoomsById(user._id)}
+              key={index}
+            >
+              <div className="relative h-15 w-15 rounded-full">
+                {user.user2url || user.user1url ? (
+                  <img
+                    src={user.user1 === userId ? user.user2url : user.user1url}
+                    alt=""
+                    className="w-10 sm:w-16 h-10 sm:h-16 rounded-full border border-white"
+                  />
+                ) : (
+                  <NoProfile />
+                )}
+                <span className="absolute right-2 bottom-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-meta-3"></span>
               </div>
-              <div className="flex h-6 w-6 m-1 items-center justify-center rounded-full bg-[#5a5269]">
-                <span className="text-sm font-medium text-white">3</span>
+              <div className="flex flex-1 items-center justify-between border-b-2 border-[#f3d2be]">
+                <div className="m-2">
+                  <h5 className="font-medium text-black dark:text-white">
+                    {user.user1 === userId ? user.user2Name : user.user1Name}
+                  </h5>
+                  <p className="flex items-center text-xs text-black dark:text-white">
+                    Hello, how are you?
+                    <span className="ml-1 text-xs">. 12 min</span>
+                  </p>
+                </div>
+                <div className="flex h-6 w-6 m-1 items-center justify-center rounded-full bg-[#5a5269]">
+                  <span className="text-sm font-medium text-white">3</span>
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
       </div>
     </div>
   );

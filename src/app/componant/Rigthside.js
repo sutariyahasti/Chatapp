@@ -24,7 +24,11 @@ function RightSide({
   const [socket, setSocket] = useState(null);
 console.log(ChatRoomDetails,"ChatRoomDetails");
   useEffect(() => {
-    const socketInstance = io.connect(url, {
+    if (!url) {
+      console.error('NEXT_PUBLIC_API_URL is not set');
+      return;
+    }
+    const socketInstance = io.connect("https://vibeschat.vercel.app", {
       reconnection: true,
       reconnectionAttempts: 10, // Number of reconnection attempts before giving up
       reconnectionDelay: 1000, // Time delay in milliseconds between each reconnection attempt
@@ -39,7 +43,9 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
     socketInstance.on("chat", (message) => {
       setChats((prevMessages) => [...prevMessages, message]);
     });
-
+    socketInstance.on('connect_error', (err) => {
+      console.error('Connection error:', err);
+  });
     return () => {
       if (socketInstance) {
         socketInstance.disconnect();
@@ -62,7 +68,7 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await axios.get(`${url}/api/getAllChats`, {
+        const response = await axios.get(`/api/getAllChats`, {
           params: { id: ChatRoomDetails?._id },
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -391,6 +397,7 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
   ) : (
     <div className="flex-grow flex items-center justify-center">
       <h1>Hello(❁´◡`❁)</h1>
+      <p>Choose your fav ones!</p>
     </div>
   )}
 </div>

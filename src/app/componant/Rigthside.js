@@ -28,7 +28,7 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
       console.error('NEXT_PUBLIC_API_URL is not set');
       return;
     }
-    const socketInstance = io.connect("https://vibeschat.vercel.app", {
+    const socketInstance = io.connect("http://localhost:3000", {
       reconnection: true,
       reconnectionAttempts: 10, // Number of reconnection attempts before giving up
       reconnectionDelay: 1000, // Time delay in milliseconds between each reconnection attempt
@@ -395,7 +395,7 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
       </div>
     </>
   ) : (
-    <div className="flex-grow flex items-center justify-center">
+    <div className="flex-grow flex flex-col items-center justify-center">
       <h1>Hello(❁´◡`❁)</h1>
       <p>Choose your fav ones!</p>
     </div>

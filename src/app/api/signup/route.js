@@ -28,7 +28,7 @@ export async function POST(req) {
 
             // Generate JWT token
             const token = generateToken({ userId: insertedId });
-            const newUser = {name , email, password, url}
+            const newUser = {name , email, password, url, insertedId}
 
             return new Response(JSON.stringify({ success: true, token, result,newUser }), { status: 201 });
         } else {

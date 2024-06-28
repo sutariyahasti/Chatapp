@@ -66,7 +66,7 @@ const LeftSide = ({
   const createChatroom = async (id, name, url) => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/createchatroom`,
+        `/api/createchatroom`,
         {
           chatName: "hasti",
           user1Name: username,

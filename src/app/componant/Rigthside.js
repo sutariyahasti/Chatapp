@@ -89,7 +89,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
     if (ChatRoomDetails) {
       fetchChats();
     }
-  }, [ChatRoomDetails]);
+  }, [ChatRoomDetails,messages]);
 
   const handleInputChange = (event) => {
     const { value } = event.target;

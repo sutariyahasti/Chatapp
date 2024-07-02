@@ -28,7 +28,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
       console.error("NEXT_PUBLIC_API_URL is not set");
       return;
     }
-    const socketInstance = io.connect("http://localhost:3000", {
+    const socketInstance = io.connect(url, {
       reconnection: true,
       reconnectionAttempts: 10, // Number of reconnection attempts before giving up
       reconnectionDelay: 1000, // Time delay in milliseconds between each reconnection attempt

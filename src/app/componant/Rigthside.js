@@ -22,10 +22,10 @@ function RightSide({
   const [loginUserProfile, setLoginUserProfile] = useState(null);
   const [error, setError] = useState(null);
   const [socket, setSocket] = useState(null);
-console.log(ChatRoomDetails,"ChatRoomDetails");
+console.log(ChatRoomDetails, "ChatRoomDetails");
   useEffect(() => {
     if (!url) {
-      console.error('NEXT_PUBLIC_API_URL is not set');
+      console.error("NEXT_PUBLIC_API_URL is not set");
       return;
     }
     const socketInstance = io.connect("http://localhost:3000", {
@@ -43,9 +43,9 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
     socketInstance.on("chat", (message) => {
       setChats((prevMessages) => [...prevMessages, message]);
     });
-    socketInstance.on('connect_error', (err) => {
-      console.error('Connection error:', err);
-  });
+    socketInstance.on("connect_error", (err) => {
+      console.error("Connection error:", err);
+    });
     return () => {
       if (socketInstance) {
         socketInstance.disconnect();
@@ -167,244 +167,243 @@ console.log(ChatRoomDetails,"ChatRoomDetails");
           profileuser={profileuser}
         />
       )}
-     <div className="flex flex-col h-screen bg-white xl:col-span-6 sm:col-span-6">
-  {ChatRoomDetails && ChatRoomDetails._id ? (
-    <>
-      {/* ChatHeader */}
-      <div className="h-[12%]">
-        <ChatHeader
-          ChatRoomDetails={ChatRoomDetails}
-          userId={userId}
-          getUserProfile={getUserProfile}
-        />
-      </div>
+      <div className="flex flex-col h-screen bg-white xl:col-span-6 sm:col-span-6">
+        {ChatRoomDetails && ChatRoomDetails._id ? (
+          <>
+            {/* ChatHeader */}
+            <div className="h-[12%]">
+              <ChatHeader
+                ChatRoomDetails={ChatRoomDetails}
+                userId={userId}
+                getUserProfile={getUserProfile}
+              />
+            </div>
 
-      {/* chatwindow */}
-      <div className="flex flex-col-reverse justify-between h-[81%] overflow-auto">
-        <div className="flex flex-col mt-5">
-          <div className="w-full px-5 text-center justify-between"></div>
-          {chats &&
-            chats.length > 0 &&
-            chats.map((msg, index) => {
-              const msgDate = new Date(msg?.createdAt);
-              const currentDate = new Date();
-              const differenceInDays = Math.floor(
-                (currentDate - msgDate) / (24 * 60 * 60 * 1000)
-              );
+            {/* chatwindow */}
+            <div className="flex flex-col-reverse justify-between h-[81%] overflow-auto">
+              <div className="flex flex-col mt-5">
+                <div className="w-full px-5 text-center justify-between"></div>
+                {chats &&
+                  chats.length > 0 &&
+                  chats.map((msg, index) => {
+                    const msgDate = new Date(msg?.createdAt);
+                    const currentDate = new Date();
+                    const differenceInDays = Math.floor(
+                      (currentDate - msgDate) / (24 * 60 * 60 * 1000)
+                    );
 
-              let dayTag = "";
-              if (differenceInDays === 0) {
-                dayTag = "Today";
-              } else if (differenceInDays === 1) {
-                dayTag = "Yesterday";
-              } else if (differenceInDays < 7) {
-                dayTag = msgDate.toLocaleDateString("en-IN", {
-                  weekday: "long",
-                });
-              } else {
-                dayTag = msgDate.toLocaleDateString("en-IN");
-              }
+                    let dayTag = "";
+                    if (differenceInDays === 0) {
+                      dayTag = "Today";
+                    } else if (differenceInDays === 1) {
+                      dayTag = "Yesterday";
+                    } else if (differenceInDays < 7) {
+                      dayTag = msgDate.toLocaleDateString("en-IN", {
+                        weekday: "long",
+                      });
+                    } else {
+                      dayTag = msgDate.toLocaleDateString("en-IN");
+                    }
 
-              return (
-                <>
-                  <div className="mt-4 flex justify-center">
-                    {(index === 0 ||
-                      formatDate(chats[index - 1]?.createdAt) !==
-                        formatDate(msg.createdAt)) && (
-                      <div className="bg-[#1a1615] text-white py-1 px-4 rounded-3xl">
-                        {formatDate(msg.createdAt)}
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    key={index}
-                    className={`flex mb-4 ${
-                      userId === msg?.sender
-                        ? "justify-end"
-                        : "justify-start"
-                    }`}
-                  >
-                    {userId !== msg?.sender && (
-                      <img
-                        src={ChatRoomDetails.user1url}
-                        className="object-cover h-8 w-8 rounded-full m-2 mt-7"
-                        alt="🙂"
-                      />
-                    )}
-                    <div className={"flex flex-col"}>
-                      {dayTag && (
-                        <span
-                          className={`text-xs text-gray-400 flex mx-2 ${
+                    return (
+                      <>
+                        <div className="mt-4 flex justify-center">
+                          {(index === 0 ||
+                            formatDate(chats[index - 1]?.createdAt) !==
+                              formatDate(msg.createdAt)) && (
+                            <div className="bg-[#1a1615] text-white py-1 px-4 rounded-3xl">
+                              {formatDate(msg.createdAt)}
+                            </div>
+                          )}
+                        </div>
+                        <div
+                          key={index}
+                          className={`flex mb-4 ${
                             userId === msg?.sender
                               ? "justify-end"
                               : "justify-start"
                           }`}
                         >
-                          {dayTag}
-                        </span>
-                      )}
-                      <div
-                        className={`py-0 px-0 m-0 ${
-                          userId === msg?.sender
-                            ? "bg-[#e68e7f] rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white flex flex-row"
-                            : "bg-gradient-to-tr from-slate-300 to-slate-200 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black flex flex-row"
-                        }`}
-                      >
-                        <div className="m-2 p-2 ">{msg?.content}</div>
-                        <span className="font-thin text-xs p-1 mt-6 mr-1">
-                          {`${msgDate.toLocaleTimeString("en-IN", {
-                            hour: "numeric",
-                            minute: "numeric",
-                            hour12: true,
-                            timeZone: "Asia/Kolkata",
-                          })}`}
-                        </span>
-                      </div>
-                    </div>
-                    {userId === msg?.sender && (
-                      <img
-                        src={loginUserProfile}
-                        className="object-cover h-8 w-8 rounded-full m-2 mt-7"
-                        alt="🙂"
-                      />
-                    )}
-                  </div>
-                  
-                </>
-              );
-            })}
-        </div>
-        
-      </div>
-      
+                          {userId !== msg?.sender && (
+                            <img
+                              src={ChatRoomDetails.user1url}
+                              className="object-cover h-8 w-8 rounded-full m-2 mt-7"
+                              alt="🙂"
+                            />
+                          )}
+                          <div className={"flex flex-col"}>
+                            {dayTag && (
+                              <span
+                                className={`text-xs text-gray-400 flex mx-2 ${
+                                  userId === msg?.sender
+                                    ? "justify-end"
+                                    : "justify-start"
+                                }`}
+                              >
+                                {dayTag}
+                              </span>
+                            )}
+                            <div
+                              className={`py-0 px-0 m-0 ${
+                                userId === msg?.sender
+                                  ? "bg-[#e68e7f] rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white flex flex-row"
+                                  : "bg-gradient-to-tr from-slate-300 to-slate-200 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black flex flex-row"
+                              }`}
+                            >
+                              <div className="m-2 p-2 ">{msg?.content}</div>
+                              <span className="font-thin text-xs p-1 mt-6 mr-1">
+                                {`${msgDate.toLocaleTimeString("en-IN", {
+                                  hour: "numeric",
+                                  minute: "numeric",
+                                  hour12: true,
+                                  timeZone: "Asia/Kolkata",
+                                })}`}
+                              </span>
+                            </div>
+                          </div>
+                          {userId === msg?.sender && (
+                            <img
+                              src={loginUserProfile}
+                              className="object-cover h-8 w-8 rounded-full m-2 mt-7"
+                              alt="🙂"
+                            />
+                          )}
+                        </div>
+                      </>
+                    );
+                  })}
+              </div>
+            </div>
 
-      {/* sendchat */}
-      <div className="h-[7%] border-t-2 bg-white border-gray-200 pt-4 px-2 mb-2 flex flex-row fixed bottom-0 w-[80%]">
-        <div className="relative flex-1 ">
-          <span className="absolute inset-y-0 flex items-center">
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="h-6 w-6 text-gray-600"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                ></path>
-              </svg>
-            </button>
-          </span>
-          <input
-            type="text"
-            name="chat"
-            placeholder="Write your message!"
-            className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-[#e4a69c] rounded-md py-3"
-            value={messages}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-        <div className="relative flex-2 right-0 items-center inset-y-0 flex">
-          <button
-            type="button"
-            className="inline-flex m-1 text-white items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out border-2 bg-[#5a5269] border-[#5a5269] hover:bg-gray-300 focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="h-6 w-6 text-white hover:text-gray-600"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-              ></path>
-            </svg>
-          </button>
-          <button
-            type="button"
-            className="inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="h-6 w-6 text-white hover:text-gray-600"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-              ></path>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-              ></path>
-            </svg>
-          </button>
-          <button
-            type="button"
-            className="inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="h-6 w-6 text-white hover:text-gray-600"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-gradient-to-tr from-[#e68e7f] to-[#df3618] hover:bg-blue-400 focus:outline-none"
-            onClick={handleSendMessage}
-          >
-            <span className="font-bold">Send</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="h-6 w-6 ml-2 transform rotate-90"
-            >
-              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
-            </svg>
-          </button>
-        </div>
+            {/* sendchat */}
+            <div className="h-[7%] border-t-2 bg-white border-gray-200 pt-4 px-2 mb-2 flex flex-row fixed bottom-0 w-[80%]">
+              <div className="relative flex-1 ">
+                <span className="absolute inset-y-0 flex items-center">
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      className="h-6 w-6 text-gray-600"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+                      ></path>
+                    </svg>
+                  </button>
+                </span>
+                <input
+                  type="text"
+                  name="chat"
+                  placeholder="Write your message!"
+                  className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-[#e4a69c] rounded-md py-3"
+                  value={messages}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
+              <div className="relative flex-2 right-0 items-center inset-y-0 flex">
+                <button
+                  type="button"
+                  className="inline-flex m-1 text-white items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out border-2 bg-[#5a5269] border-[#5a5269] hover:bg-gray-300 focus:outline-none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="h-6 w-6 text-white hover:text-gray-600"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="h-6 w-6 text-white hover:text-gray-600"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                    ></path>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="h-6 w-6 text-white hover:text-gray-600"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-gradient-to-tr from-[#e68e7f] to-[#df3618] hover:bg-blue-400 focus:outline-none"
+                  onClick={handleSendMessage}
+                >
+                  <span className="font-bold">Send</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="h-6 w-6 ml-2 transform rotate-90"
+                  >
+                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex-grow flex flex-col items-center justify-center bg-gray-100 py-10 px-4">
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">
+              Hello (❁´◡`❁)
+            </h1>
+            <p className="text-lg sm:text-2xl text-gray-600">
+              Choose your fav ones!
+            </p>
+          </div>
+        )}
       </div>
-    </>
-  ) : (
-    <div className="flex-grow flex flex-col items-center justify-center">
-      <h1>Hello(❁´◡`❁)</h1>
-      <p>Choose your fav ones!</p>
-    </div>
-  )}
-</div>
-
     </>
   );
 }
 
 export default RightSide;
-

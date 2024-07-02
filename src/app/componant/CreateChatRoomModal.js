@@ -10,11 +10,16 @@ const CreateChatRoomModal = ({ signeduser, createChatroom, setOpen }) => {
   };
 
   return (
-    <div id="myModal" className="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50">
+    <div
+      id="myModal"
+      className="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50"
+    >
       <div className="modal-container mx-auto">
-        <div className="modal-content bg-white w-96 mx-auto mt-10 p-4 rounded-lg z-[100]">
+        <div className="modal-content bg-white w-96 mx-auto mt-10 p-4 rounded-lg z-[100] max-h-560 no-scrollbar overflow-auto">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Create Chatroom with your favs!</h2>
+            <h2 className="text-xl font-bold">
+              Create Chatroom with your favs!
+            </h2>
             <button
               onClick={() => {
                 setOpen(false);

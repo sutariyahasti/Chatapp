@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CreateChatRoomModal from "./CreateChatRoomModal";
+import UseName from "@/public/images/UseName";
 
 const LeftSide = ({
   allusers,
@@ -134,7 +135,7 @@ const LeftSide = ({
               setOpen(true);
             }}
           >
-            <b>+</b>
+            <b><UseName /></b>
           </button>
         </div>
       </div>

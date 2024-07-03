@@ -234,7 +234,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                           key={index}
                           className={`flex text-justify ${
                             userId === msg?.sender
-                              ? "justify-end  "
+                              ? "justify-end "
                               : "justify-start "
                           }`}
                         >
@@ -264,7 +264,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                                   : "bg-gradient-to-tr from-slate-300 to-slate-200 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black flex flex-row"
                               }`}
                             >
-                              <div className="m-1 p-2 lg:max-w-[400px] max-w-60 text-xs lg:text-base  break-words">{msg?.content}</div>
+                              <div className="m-1 p-2 lg:max-w-[400px] max-w-60 text-sm lg:text-base  break-words">{msg?.content}</div>
                               <span className="font-thin text-xs p-1 mt-4 mr-1">
                                 {`${msgDate.toLocaleTimeString("en-IN", {
                                   hour: "numeric",
@@ -290,7 +290,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
             </div>
 
             {/* sendchat */}
-            <div className="md:h-[7%] h-[10%] items-center border-t-2 bg-white border-gray-200 pt-4 px-2 mb-2 flex flex-row fixed bottom-0 w-full lg:w-[80%] ">
+            <div className="md:h-[7%]  items-center border-t-2 bg-white border-gray-200 pt-4 px-2 mb-2 flex flex-row fixed bottom-0 w-full lg:w-[80%] ">
               <div className="relative flex-1 mr-2">
                 <span className="absolute inset-y-0 flex items-center">
                   <button

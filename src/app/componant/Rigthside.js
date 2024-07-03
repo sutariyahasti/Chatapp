@@ -194,7 +194,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
             </div>
 
             {/* chatwindow */}
-            <div className="flex flex-col-reverse justify-between h-[78%] lg:[81%] overflow-auto no-scrollbar">
+            <div className="flex flex-col-reverse justify-between h-[78%] lg:[81%] overflow-auto no-scrollbar bg-blur">
               <div className="flex flex-col mt-5">
                 <div className="w-full px-5 text-center justify-between"></div>
                 {chats &&
@@ -221,32 +221,32 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
 
                     return (
                       <>
-                        <div className="mt-4 flex justify-center">
+                        <div className="my-1 flex justify-center">
                           {(index === 0 ||
                             formatDate(chats[index - 1]?.createdAt) !==
                               formatDate(msg.createdAt)) && (
-                            <div className="bg-[#1a1615] text-white py-1 px-4 rounded-3xl">
+                            <div className="bg-[#1a161511] text-gray-600 py-1 px-4 rounded-3xl">
                               {formatDate(msg.createdAt)}
                             </div>
                           )}
                         </div>
                         <div
                           key={index}
-                          className={`flex mb-4 ${
+                          className={`flex text-justify ${
                             userId === msg?.sender
-                              ? "justify-end"
-                              : "justify-start"
+                              ? "justify-end  "
+                              : "justify-start "
                           }`}
                         >
                           {userId !== msg?.sender && (
                             <img
                               src={ChatRoomDetails.user1url}
-                              className="object-cover h-8 w-8 rounded-full m-2 mt-7"
+                              className="object-cover h-8 w-8 rounded-full m-1 "
                               alt="🙂"
                             />
                           )}
                           <div className={"flex flex-col"}>
-                            {dayTag && (
+                            {/* {dayTag && (
                               <span
                                 className={`text-xs text-gray-400 flex mx-2 ${
                                   userId === msg?.sender
@@ -254,9 +254,9 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                                     : "justify-start"
                                 }`}
                               >
-                                {dayTag}
+                                {dayTag}===
                               </span>
-                            )}
+                            )} */}
                             <div
                               className={`py-0 px-0 m-0 ${
                                 userId === msg?.sender
@@ -264,8 +264,8 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                                   : "bg-gradient-to-tr from-slate-300 to-slate-200 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black flex flex-row"
                               }`}
                             >
-                              <div className="m-2 p-2 ">{msg?.content}</div>
-                              <span className="font-thin text-xs p-1 mt-6 mr-1">
+                              <div className="m-1 p-2 lg:max-w-[400px] max-w-60 text-xs lg:text-base  break-words">{msg?.content}</div>
+                              <span className="font-thin text-xs p-1 mt-4 mr-1">
                                 {`${msgDate.toLocaleTimeString("en-IN", {
                                   hour: "numeric",
                                   minute: "numeric",
@@ -278,7 +278,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                           {userId === msg?.sender && (
                             <img
                               src={loginUserProfile}
-                              className="object-cover h-8 w-8 rounded-full m-2 mt-7"
+                              className="object-cover h-8 w-8 rounded-full m-1"
                               alt="🙂"
                             />
                           )}

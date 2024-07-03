@@ -1,7 +1,6 @@
 // ChatHeader.jsx
 import React from "react";
 import NoProfile from "@/public/images/noprofile.jsx";
-import { backArrow } from "@/public/images/image.png";
 import BackArrow from "@/public/images/BackArrow";
 
 const ChatHeader = ({

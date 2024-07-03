@@ -17,7 +17,7 @@ function ChatBoard() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [chatRoomDetails, setChatRoomDetails] = useState();
   const router = useRouter();
-  const [rightsideShow ,setRightsideShow] = useState(true)
+  const [rightsideShow ,setRightsideShow] = useState(false)
   const [leftsideShow ,setleftsideShow] = useState(true)
 
   // const [socket, setSocket] = useState(null);

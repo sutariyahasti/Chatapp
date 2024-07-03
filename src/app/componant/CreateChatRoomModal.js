@@ -57,7 +57,7 @@ const CreateChatRoomModal = ({ signeduser, createChatroom, setOpen }) => {
               signeduser.map((user, index) => (
                 <Link
                   href={"#"}
-                  className="flex items-center gap-5 py-3 px-7.5 hover:bg-[#f3d2be] dark:hover:bg-purple-100"
+                  className="flex items-center gap-5 py-3 px-7.5 hover:bg-[#f3d2be]"
                   onClick={() => createChatroom(user._id, user.name, user.url)}
                   key={index}
                 >
@@ -71,7 +71,7 @@ const CreateChatRoomModal = ({ signeduser, createChatroom, setOpen }) => {
                   </div>
                   <div className="flex flex-1 items-center justify-between border-b-2 border-[#f3d2be] ">
                     <div>
-                      <h5 className="font-medium text-black dark:text-white">
+                      <h5 className="font-medium text-black ">
                         {user.name}
                       </h5>
                     </div>

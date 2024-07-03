@@ -1,10 +1,19 @@
 // ChatHeader.jsx
 import React from "react";
 import NoProfile from "@/public/images/noprofile.jsx";
+import { backArrow } from "@/public/images/image.png";
+import BackArrow from "@/public/images/BackArrow";
 
-const ChatHeader = ({ ChatRoomDetails, userId, getUserProfile }) => {
+const ChatHeader = ({
+  ChatRoomDetails,
+  userId,
+  getUserProfile,
+  showLeftside,
+}) => {
   return (
-    <div className="flex sm:items-center fixed space-x-4 w-[80%] bg-[#5a5269] z-[5] justify-between p-6 border-b-2 border-gray-200">
+    <div className="flex sm:items-center xl:fixed space-x-4 xl:w-[80%] bg-[#5a5269] z-[5] items-center xl:justify-between xl:p-6 p-4 border-b-2 border-gray-200">
+      <BackArrow showLeftside={showLeftside} />
+
       <div className="relative flex items-center space-x-4">
         <div className="relative">
           <span className="absolute text-green-500 right-0 bottom-0">
@@ -41,7 +50,7 @@ const ChatHeader = ({ ChatRoomDetails, userId, getUserProfile }) => {
       <div className="flex items-center space-x-2">
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+          className="hidden xl:inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +69,7 @@ const ChatHeader = ({ ChatRoomDetails, userId, getUserProfile }) => {
         </button>
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+          className="hidden xl:inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +88,7 @@ const ChatHeader = ({ ChatRoomDetails, userId, getUserProfile }) => {
         </button>
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+          className="hidden xl:inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
           onClick={() =>
             getUserProfile(
               ChatRoomDetails?.user1 === userId

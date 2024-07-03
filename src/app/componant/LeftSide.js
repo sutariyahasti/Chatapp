@@ -13,7 +13,10 @@ const LeftSide = ({
   signeduser,
   fetchUser,
   ChatRoomDetails,
-}) => {
+  setleftsideShow,
+  leftsideShow,
+  setRightsideShow,
+  }) => {
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("");
@@ -98,10 +101,18 @@ const LeftSide = ({
 
   const getChatRoomsById = (id) => {
     fetchChatRoomsById(id);
+    setRightsideShow(true)
+    setleftsideShow(false)
   };
 
   return (
-    <div className="min-h-screen col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-6 sm:col-span-6">
+    <div 
+    // className="min-h-screen col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-6 sm:col-span-6"
+    className={`min-h-screen xl:block col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-6 sm:col-span-6 ${
+      leftsideShow === true
+        ? "block"
+        : "hidden"
+    }`}>
       <div className="sticky top-0 flex items-center space-x-4 bg-[#5a5269] z-10 sm:items-center justify-between py-6 px-2 border-b-2 border-gray-200">
         <div className="relative h-15 w-15 rounded-full">
           {Profile ? (

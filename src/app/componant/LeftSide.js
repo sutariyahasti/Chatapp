@@ -108,7 +108,7 @@ const LeftSide = ({
   return (
     <div 
     // className="min-h-screen col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-6 sm:col-span-6"
-    className={`min-h-screen lg:block col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark md:col-span-6 sm:col-span-6 ${
+    className={`min-h-screen lg:block col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default md:col-span-6 sm:col-span-6 ${
       leftsideShow === true
         ? "block"
         : "hidden"
@@ -156,7 +156,7 @@ const LeftSide = ({
           users.map((user, index) => (
             <Link
               href={"#"}
-              className="flex items-center gap-1 py-3 px-7.5 hover:bg-[#f3d2be] dark:hover:bg-[#f3d2be]"
+              className="flex items-center gap-1 py-3 px-7.5 hover:bg-[#f3d2be] "
               onClick={() => getChatRoomsById(user._id)}
               key={index}
             >
@@ -174,10 +174,10 @@ const LeftSide = ({
               </div>
               <div className="flex flex-1 items-center justify-between border-b-2 border-[#f3d2be]">
                 <div className="m-2">
-                  <h5 className="font-medium text-black dark:text-white">
+                  <h5 className="font-medium text-black">
                     {user.user1 === userId ? user.user2Name : user.user1Name}
                   </h5>
-                  <p className="flex items-center text-xs text-black dark:text-white">
+                  <p className="flex items-center text-xs text-black ">
                     Hello, how are you?
                     <span className="ml-1 text-xs">. 12 min</span>
                   </p>

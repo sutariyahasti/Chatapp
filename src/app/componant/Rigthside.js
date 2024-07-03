@@ -175,8 +175,8 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
         />
       )}
       <div
-      //  className="flex flex-col h-screen bg-white xl:col-span-6 sm:col-span-6"
-      className={`xl:flex flex-col h-screen bg-white xl:col-span-6 sm:col-span-6 ${
+      //  className="flex flex-col h-screen bg-white md:col-span-6 sm:col-span-6"
+      className={`lg:flex flex-col h-screen bg-white md:col-span-6 sm:col-span-6 ${
         rightsideShow === true
           ? "flex"
           : "hidden"
@@ -184,7 +184,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
         {ChatRoomDetails && ChatRoomDetails._id ? (
           <>
             {/* ChatHeader */}
-            <div className="xl:h-[12%] ">
+            <div className="md:h-[12%] ">
               <ChatHeader
                 ChatRoomDetails={ChatRoomDetails}
                 userId={userId}
@@ -194,7 +194,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
             </div>
 
             {/* chatwindow */}
-            <div className="flex flex-col-reverse justify-between h-[78%] xl:[81%] overflow-auto no-scrollbar">
+            <div className="flex flex-col-reverse justify-between h-[78%] lg:[81%] overflow-auto no-scrollbar">
               <div className="flex flex-col mt-5">
                 <div className="w-full px-5 text-center justify-between"></div>
                 {chats &&
@@ -290,12 +290,12 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
             </div>
 
             {/* sendchat */}
-            <div className="xl:h-[7%] h-[10%] border-t-2 bg-white border-gray-200 pt-4 px-2 mb-2 flex flex-row fixed bottom-0 xl:w-[80%] ">
+            <div className="md:h-[7%] h-[10%] items-center border-t-2 bg-white border-gray-200 pt-4 px-2 mb-2 flex flex-row fixed bottom-0 w-full lg:w-[80%] ">
               <div className="relative flex-1 mr-2">
                 <span className="absolute inset-y-0 flex items-center">
                   <button
                     type="button"
-                    className="hidden xl:inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+                    className="hidden md:inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -326,7 +326,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
               <div className="relative flex-2 right-0 items-center inset-y-0 flex">
                 <button
                   type="button"
-                  className="hidden xl:inline-flex m-1 text-white items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out border-2 bg-[#5a5269] border-[#5a5269] hover:bg-gray-300 focus:outline-none"
+                  className="hidden md:inline-flex m-1 text-white items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out border-2 bg-[#5a5269] border-[#5a5269] hover:bg-gray-300 focus:outline-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -345,7 +345,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                 </button>
                 <button
                   type="button"
-                  className="hidden xl:inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
+                  className="hidden md:inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -370,7 +370,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                 </button>
                 <button
                   type="button"
-                  className="hidden xl:inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
+                  className="hidden md:inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

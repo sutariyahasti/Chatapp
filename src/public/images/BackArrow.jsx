@@ -26,7 +26,7 @@ function BackArrow({showLeftside}) {
     //       </g>
     //     </svg>
     //   </div>
-    <div onClick={()=>showLeftside()}>
+    <div className="xl:hidden !lg:hidden block" onClick={()=>showLeftside()}>
       <svg
         version="1.2"
         xmlns="http://www.w3.org/2000/svg"

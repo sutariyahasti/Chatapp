@@ -10,10 +10,11 @@ const ChatHeader = ({
   showLeftside,
 }) => {
   return (
-    <div className="flex sm:items-center xl:fixed space-x-4 xl:w-[80%] bg-[#5a5269] z-[5] items-center xl:justify-between xl:p-6 p-4 border-b-2 border-gray-200">
-      <BackArrow showLeftside={showLeftside} />
+    <div className="">
+    <div className="flex sm:items-center md:fixed space-x-4 w-full lg:w-[80%] bg-[#5a5269] z-[5] items-center md:justify-between md:p-6 p-4 border-b-2 border-gray-200">
 
       <div className="relative flex items-center space-x-4">
+      <BackArrow showLeftside={showLeftside} />
         <div className="relative">
           <span className="absolute text-green-500 right-0 bottom-0">
             <svg width="20" height="20">
@@ -49,7 +50,7 @@ const ChatHeader = ({
       <div className="flex items-center space-x-2">
         <button
           type="button"
-          className="hidden xl:inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+          className="hidden md:inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +69,7 @@ const ChatHeader = ({
         </button>
         <button
           type="button"
-          className="hidden xl:inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+          className="hidden md:inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +88,7 @@ const ChatHeader = ({
         </button>
         <button
           type="button"
-          className="hidden xl:inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+          className="hidden md:inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
           onClick={() =>
             getUserProfile(
               ChatRoomDetails?.user1 === userId
@@ -112,6 +113,7 @@ const ChatHeader = ({
           </svg>
         </button>
       </div>
+    </div>
     </div>
   );
 };

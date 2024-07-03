@@ -132,7 +132,7 @@ function ChatBoard() {
   };
   return (
     <>
-      <div className="font-[cursive] grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5  rounded w-full ">
+      <div className="font-[cursive] grid grid-cols-1  lg:grid-cols-5  rounded w-full ">
         {/* Left side */}
         <div className="md:col-span-1 lg:col-span-1 rounded w-full overflow-auto">
           <LeftSide

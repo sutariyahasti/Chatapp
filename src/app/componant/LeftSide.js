@@ -108,7 +108,7 @@ const LeftSide = ({
   return (
     <div 
     // className="min-h-screen col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-6 sm:col-span-6"
-    className={`min-h-screen xl:block col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-6 sm:col-span-6 ${
+    className={`min-h-screen lg:block col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark md:col-span-6 sm:col-span-6 ${
       leftsideShow === true
         ? "block"
         : "hidden"

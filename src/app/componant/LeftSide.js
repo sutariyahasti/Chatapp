@@ -105,20 +105,26 @@ const LeftSide = ({
   };
 
   return (
-    <div 
-    // className="min-h-screen col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-6 sm:col-span-6"
-    className={`min-h-screen lg:block col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default md:col-span-6 sm:col-span-6 ${
+    <div className={`py-4 pl-4 pr-4 lg:pr-0 lg:block h-screen ${
       leftsideShow === true
         ? "block"
         : "hidden"
     }`}>
-      <div className="sticky top-0 flex items-center space-x-4 bg-[#5a5269] z-10 sm:items-center justify-between py-6 px-2 border-b-2 border-gray-200">
+      {/* <div className="w-40 h-40  absolute backdrop-blur-sm bg-black/30"></div> */}
+    <div 
+    // className="min-h-screen col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-6 sm:col-span-6"
+    className={`rounded-xl h-full p-3 overflow-auto  no-scrollbar lg:block col-span-12  bg-[#cec6c63a] text-gray-300  shadow-default md:col-span-6 sm:col-span-6 ${
+      leftsideShow === true
+        ? "block"
+        : "hidden"
+    }`}>
+      <div className="sticky top-0 flex rounded-xl items-center space-x-4 bg-blackbg text-white z-10 sm:items-center justify-between py-6 px-2 border-b-2 border-gray-200">
         <div className="relative h-15 w-15 rounded-full">
           {Profile ? (
             <img
               src={Profile && Profile}
               alt=""
-              className="w-10 sm:w-16 h-10 sm:h-16 rounded-full border border-white"
+              className="w-10 sm:w-16 h-10 sm:h-16 rounded-full "
             />
           ) : (
             <NoProfile />
@@ -140,7 +146,7 @@ const LeftSide = ({
           )}
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+            className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-200 hover:bg-gray-200 focus:outline-none"
             onClick={() => {
               setOpen(true);
             }}
@@ -149,13 +155,13 @@ const LeftSide = ({
           </button>
         </div>
       </div>
-      <div className="overflow-auto h-full">
+      <div className="overflow-auto">
         {users &&
           users.length > 0 &&
           users.map((user, index) => (
             <Link
               href={"#"}
-              className="flex items-center gap-1 py-3 px-7.5 hover:bg-[#f3d2be] "
+              className="flex items-center gap-1 py-3 px-7.5 hover:bg-tan rounded-xl my-1 p-1 hover:text-yellow-50 "
               onClick={() => getChatRoomsById(user._id)}
               key={index}
             >
@@ -164,30 +170,31 @@ const LeftSide = ({
                   <img
                     src={user.user1 === userId ? user.user2url : user.user1url}
                     alt=""
-                    className="w-10 sm:w-16 h-10 sm:h-16 rounded-full border border-white"
+                    className="w-10 sm:w-16 h-10 sm:h-16 rounded-full "
                   />
                 ) : (
                   <NoProfile />
                 )}
                 <span className="absolute right-2 bottom-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-meta-3"></span>
               </div>
-              <div className="flex flex-1 items-center justify-between border-b-2 border-[#f3d2be]">
+              <div className="flex flex-1 items-center justify-between  border-[#f3d2be]">
                 <div className="m-2">
-                  <h5 className="font-medium text-black">
+                  <h5 className="font-medium">
                     {user.user1 === userId ? user.user2Name : user.user1Name}
                   </h5>
-                  <p className="flex items-center text-xs text-black ">
+                  <p className="flex items-center text-xs ">
                     Hello, how are you?
                     <span className="ml-1 text-xs">. 12 min</span>
                   </p>
                 </div>
-                <div className="flex h-6 w-6 m-1 items-center justify-center rounded-full bg-[#5a5269]">
+                <div className="flex h-6 w-6 m-1 items-center justify-center rounded-full bg-[#ebdddd52]">
                   <span className="text-sm font-medium text-white">3</span>
                 </div>
               </div>
             </Link>
           ))}
       </div>
+    </div>
     </div>
   );
 };

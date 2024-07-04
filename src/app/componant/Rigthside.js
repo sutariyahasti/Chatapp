@@ -211,9 +211,12 @@ function RightSide({
           profileuser={profileuser}
         />
       )}
+      <div className={`p-4 h-screen  lg:block ${
+          rightsideShow === true ? "block" : "hidden"
+        }`}>
       <div
         //  className="flex flex-col h-screen bg-white md:col-span-6 sm:col-span-6"
-        className={`lg:flex flex-col h-screen bg-white md:col-span-6 sm:col-span-6 ${
+        className={`lg:flex flex-col h-full  p-3 rounded-xl  bg-[#cec6c63a] md:col-span-6 sm:col-span-6 no-scrollbar  ${
           rightsideShow === true ? "flex" : "hidden"
         }`}
       >
@@ -230,7 +233,7 @@ function RightSide({
             </div>
 
             {/* chatwindow */}
-            <div className="flex flex-col-reverse justify-between h-[78%] lg:[81%] overflow-auto no-scrollbar bg-blur">
+            <div className="flex flex-col-reverse justify-between  h-[80%] md:h-[76%] lg:h-[80%] overflow-auto no-scrollbar ">
               <div className="flex flex-col mt-5">
                 <div className="w-full px-5 text-center justify-between"></div>
                 {chats &&
@@ -261,7 +264,7 @@ function RightSide({
                           {(index === 0 ||
                             formatDate(chats[index - 1]?.createdAt) !==
                               formatDate(msg.createdAt)) && (
-                            <div className="bg-[#1a161511] text-gray-600 py-1 px-4 rounded-3xl">
+                            <div className="bg-[#d9d9d985] text-gray-800 py-1 px-4 rounded-3xl">
                               {formatDate(msg.createdAt)}
                             </div>
                           )}
@@ -277,7 +280,7 @@ function RightSide({
                           {userId !== msg?.sender && (
                             <img
                               src={ChatRoomDetails.user1url}
-                              className="object-cover h-8 w-8 rounded-full m-1 "
+                              className="object-cover h-8 w-8 rounded-full m-2 "
                               alt="🙂"
                             />
                           )}
@@ -296,14 +299,14 @@ function RightSide({
                             <div
                               className={`py-0 px-0 m-0 ${
                                 userId === msg?.sender
-                                  ? "bg-[#e68e7f] rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white flex flex-row"
-                                  : "bg-gradient-to-tr from-slate-300 to-slate-200 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black flex flex-row"
+                                  ? "bg-[#0606063b] rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white flex flex-row"
+                                  : "bg-[#959595c7] rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black flex flex-row"
                               }`}
                             >
                               <div className="m-1 p-2 lg:max-w-[400px] max-w-60 text-sm lg:text-base  break-words">
                                 {msg?.content}
                               </div>
-                              <span className="font-thin text-xs p-1 mt-4 mr-1">
+                              <span className="font-thin text-xs p-1 mt-4 mr-2">
                                 {`${msgDate.toLocaleTimeString("en-IN", {
                                   hour: "numeric",
                                   minute: "numeric",
@@ -328,19 +331,19 @@ function RightSide({
             </div>
 
             {/* sendchat */}
-            <div className="md:h-[7%]  items-center border-t-2 bg-white border-gray-200 pt-4 px-2 mb-2 flex flex-row fixed bottom-0 w-full lg:w-[80%] ">
+            <div className="md:h-[5%]  items-center text-center bg-[#a1999956]  rounded-xl p-0 px-1 mb-2 flex flex-row justify-center fixed bottom-7 w-[88%] lg:w-[77.4%]  ">
               <div className="relative flex-1 mr-2">
                 <span className="absolute inset-y-0 flex items-center">
                   <button
                     type="button"
-                    className="hidden md:inline-flex items-center justify-center rounded-lg h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-[#92574e] focus:outline-none"
+                    className="hidden md:inline-flex items-center justify-center rounded-lg h-10 w-10 transition duration-500 ease-in-out text-gray-200 hover:bg-[#92574e] focus:outline-none"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
-                      className="h-6 w-6 text-gray-600"
+                      className="h-6 w-6 text-gray-200"
                     >
                       <path
                         strokeLinecap="round"
@@ -355,7 +358,7 @@ function RightSide({
                   type="text"
                   name="chat"
                   placeholder="Write your message!"
-                  className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-[#e4a69c] rounded-md py-3"
+                  className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-200 bg-[#635f5f56] placeholder-gray-200 pl-12 rounded-md py-3"
                   value={messages}
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
@@ -364,7 +367,7 @@ function RightSide({
               <div className="relative flex-2 right-0 items-center inset-y-0 flex">
                 <button
                   type="button"
-                  className="hidden md:inline-flex m-1 p-2 text-white items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out border-2 bg-[#5a5269] border-[#5a5269] hover:bg-gray-300 focus:outline-none"
+                  className="hidden md:inline-flex m-1 p-2 text-white items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out border-2 bg-[#312e2e69] border-[#5a5269] hover:bg-gray-300 focus:outline-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -383,7 +386,7 @@ function RightSide({
                 </button>
                 <button
                   type="button"
-                  className="hidden md:inline-flex m-1 p-2 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
+                  className="hidden md:inline-flex m-1 p-2 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#312e2e69] text-gray-500 hover:bg-gray-300 focus:outline-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -408,7 +411,7 @@ function RightSide({
                 </button>
                 <button
                   type="button"
-                  className="hidden md:inline-flex m-1 p-2 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
+                  className="hidden md:inline-flex m-1 p-2 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#312e2e69] text-gray-500 hover:bg-gray-300 focus:outline-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -445,7 +448,7 @@ function RightSide({
             </div>
           </>
         ) : (
-          <div className="flex-grow flex flex-col items-center justify-center bg-gray-100 py-10 px-4">
+          <div className="flex-grow flex flex-col items-center justify-center bg-gray-300 rounded-xl py-10 px-4">
             <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">
               Hello (❁´◡`❁)
             </h1>
@@ -469,6 +472,8 @@ function RightSide({
             </div>
           </div>
         )}
+      </div>
+
       </div>
     </>
   );

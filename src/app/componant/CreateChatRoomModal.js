@@ -12,19 +12,19 @@ const CreateChatRoomModal = ({ signeduser, createChatroom, setOpen }) => {
   return (
     <div
       id="myModal"
-      className="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50"
+      className="modal fixed  inset-0 z-50 overflow-auto bg-black bg-opacity-50"
     >
       <div className="modal-container mx-auto">
-        <div className="modal-content bg-white w-96 mx-auto mt-10 p-4 rounded-lg z-[100] max-h-560 no-scrollbar overflow-auto">
+        <div className="modal-content w-96 bg-blackbg shadow-custom mx-auto mt-36 p-4 rounded-lg z-[100] max-h-560 no-scrollbar overflow-auto">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">
+            <h2 className="text-xl font-bold text-gray-200">
               Create Chatroom with your favs!
             </h2>
             <button
               onClick={() => {
                 setOpen(false);
               }}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="text-gray-500 hover:text-gray-200  focus:outline-none"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -42,22 +42,22 @@ const CreateChatRoomModal = ({ signeduser, createChatroom, setOpen }) => {
               </svg>
             </button>
           </div>
-          <input
-            className="pl-2 outline-none border-none"
+          {/* <input
+            className="p-2  outline-none border-none bg-[#0606063b]"
             type="text"
             name="chatName"
             id="name"
             placeholder="name"
             onChange={handleInputChange}
             value={chatname}
-          />
+          /> */}
           <div className="truncate overflow-auto">
             {signeduser &&
               signeduser.length > 0 &&
               signeduser.map((user, index) => (
                 <Link
                   href={"#"}
-                  className="flex items-center gap-5 py-3 px-7.5 hover:bg-[#f3d2be]"
+                  className="flex bg-[#0606063b] text-gray-200 rounded-xl m-1 items-center gap-5 py-3 px-7.5 hover:bg-tan"
                   onClick={() => createChatroom(user._id, user.name, user.url)}
                   key={index}
                 >
@@ -67,11 +67,11 @@ const CreateChatRoomModal = ({ signeduser, createChatroom, setOpen }) => {
                       alt="User"
                       className="rounded-full h-14 w-14"
                     />
-                    <span className="absolute right-0 bottom-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-meta-3"></span>
+                    <span className="absolute right-0 bottom-0 h-3.5 w-3.5 rounded-full  bg-meta-3"></span>
                   </div>
-                  <div className="flex flex-1 items-center justify-between border-b-2 border-[#f3d2be] ">
+                  <div className="flex flex-1 items-center justify-between  ">
                     <div>
-                      <h5 className="font-medium text-black ">
+                      <h5 className="font-medium ">
                         {user.name}
                       </h5>
                     </div>
@@ -80,13 +80,13 @@ const CreateChatRoomModal = ({ signeduser, createChatroom, setOpen }) => {
                 </Link>
               ))}
           </div>
-          <button
+          {/* <button
             type="submit"
             className="block w-full bg-[#e68e7f] mt-4 py-2 rounded-2xl text-white font-semibold mb-2"
             onClick={createChatroom}
           >
             create
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

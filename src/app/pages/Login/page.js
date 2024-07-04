@@ -69,7 +69,7 @@ const Login = () => {
   return (
     <>
       <div className="h-screen md:flex">
-        <div className="relative overflow-hidden md:flex w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 i justify-around items-center hidden">
+        <div className="relative overflow-hidden lg:flex w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 i justify-around items-center hidden">
           <div>
             <h1 className="text-white font-bold text-4xl font-sans">
               Connect With Your Fav Ones!
@@ -83,8 +83,8 @@ const Login = () => {
           <div className="absolute -top-40 -right-0 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
           <div className="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
         </div>
-        <div className="flex md:w-1/2 h-full justify-center py-10 items-center bg-white">
-          <form className="bg-white w-3/5">
+        <div className="flex lg:w-1/2 w-full h-screen justify-center py-10  items-center bg-white">
+          <form className="bg-white lg:w-3/5 w-full md:p-20 p-10 lg:p-0 ">
             <h1 className="text-gray-800 font-bold text-2xl mb-1">
               Hello Again!
             </h1>

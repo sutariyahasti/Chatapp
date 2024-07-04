@@ -72,7 +72,7 @@ const LeftSide = ({
       const response = await axios.post(
         `/api/createchatroom`,
         {
-          chatName: "hasti",
+          chatName: username,
           user1Name: username,
           user2Name: name,
           user1: userId,
@@ -92,7 +92,6 @@ const LeftSide = ({
         alert("user created");
         setOpen(false);
       }
-      console.log(response, response.status, "rooms", chatname);
     } catch {
       console.log("error in creating chatrooms");
       alert(`You have already chat with ${name} ${id}`);

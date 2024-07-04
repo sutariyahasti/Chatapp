@@ -164,6 +164,7 @@ function ChatBoard() {
             leftsideShow={leftsideShow}
             setRightsideShow={setRightsideShow}
             rightsideShow={rightsideShow}
+            signeduser={signeduser}
           />
         </div>
       </div>

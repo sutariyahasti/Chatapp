@@ -4,6 +4,9 @@ import io from "socket.io-client";
 import ProfilePage from "./ProfilePage";
 import NoProfile from "@/public/images/noprofile.jsx";
 import ChatHeader from "./ChatHeader";
+import UseName from "@/public/images/UseName";
+import CreateChatRoomModal from "./CreateChatRoomModal";
+import CustomButton from "./common/CustomButton";
 
 function RightSide({
   ChatRoomDetails,
@@ -15,7 +18,8 @@ function RightSide({
   setMessages,
   setleftsideShow,
   setRightsideShow,
-  rightsideShow
+  rightsideShow,
+  signeduser,
 }) {
   const [chats, setChats] = useState([]);
   const [profile, setProfile] = useState(false);
@@ -25,7 +29,9 @@ function RightSide({
   const [loginUserProfile, setLoginUserProfile] = useState(null);
   const [error, setError] = useState(null);
   const [socket, setSocket] = useState(null);
-console.log(ChatRoomDetails, "ChatRoomDetails");
+  const [open, setOpen] = useState(false);
+
+  console.log(ChatRoomDetails, "ChatRoomDetails");
   useEffect(() => {
     if (!url) {
       console.error("NEXT_PUBLIC_API_URL is not set");
@@ -92,7 +98,38 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
     if (ChatRoomDetails) {
       fetchChats();
     }
-  }, [ChatRoomDetails,messages]);
+  }, [ChatRoomDetails, messages]);
+
+  const createChatroom = async (id, name, url) => {
+    try {
+      const response = await axios.post(
+        `/api/createchatroom`,
+        {
+          chatName: username,
+          user1Name: username,
+          user2Name: name,
+          user1: userId,
+          user2: id,
+          user1url: loginUserProfile,
+          user2url: url,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setOpen(false);
+      if (response.status === 201) {
+        alert("user created");
+        setOpen(false);
+      }
+    } catch {
+      console.log("error in creating chatrooms");
+      alert(`You have already chat with ${name} ${id}`);
+    }
+  };
 
   const handleInputChange = (event) => {
     const { value } = event.target;
@@ -161,10 +198,10 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
     }
   };
 
-  const showLeftside =() => {
-    setleftsideShow(true)
-    setRightsideShow(false)
-  }
+  const showLeftside = () => {
+    setleftsideShow(true);
+    setRightsideShow(false);
+  };
   return (
     <>
       {profile && (
@@ -175,12 +212,11 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
         />
       )}
       <div
-      //  className="flex flex-col h-screen bg-white md:col-span-6 sm:col-span-6"
-      className={`lg:flex flex-col h-screen bg-white md:col-span-6 sm:col-span-6 ${
-        rightsideShow === true
-          ? "flex"
-          : "hidden"
-      }`}>
+        //  className="flex flex-col h-screen bg-white md:col-span-6 sm:col-span-6"
+        className={`lg:flex flex-col h-screen bg-white md:col-span-6 sm:col-span-6 ${
+          rightsideShow === true ? "flex" : "hidden"
+        }`}
+      >
         {ChatRoomDetails && ChatRoomDetails._id ? (
           <>
             {/* ChatHeader */}
@@ -264,7 +300,9 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                                   : "bg-gradient-to-tr from-slate-300 to-slate-200 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black flex flex-row"
                               }`}
                             >
-                              <div className="m-1 p-2 lg:max-w-[400px] max-w-60 text-sm lg:text-base  break-words">{msg?.content}</div>
+                              <div className="m-1 p-2 lg:max-w-[400px] max-w-60 text-sm lg:text-base  break-words">
+                                {msg?.content}
+                              </div>
                               <span className="font-thin text-xs p-1 mt-4 mr-1">
                                 {`${msgDate.toLocaleTimeString("en-IN", {
                                   hour: "numeric",
@@ -295,7 +333,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                 <span className="absolute inset-y-0 flex items-center">
                   <button
                     type="button"
-                    className="hidden md:inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+                    className="hidden md:inline-flex items-center justify-center rounded-lg h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-[#92574e] focus:outline-none"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -326,7 +364,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
               <div className="relative flex-2 right-0 items-center inset-y-0 flex">
                 <button
                   type="button"
-                  className="hidden md:inline-flex m-1 text-white items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out border-2 bg-[#5a5269] border-[#5a5269] hover:bg-gray-300 focus:outline-none"
+                  className="hidden md:inline-flex m-1 p-2 text-white items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out border-2 bg-[#5a5269] border-[#5a5269] hover:bg-gray-300 focus:outline-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -345,7 +383,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                 </button>
                 <button
                   type="button"
-                  className="hidden md:inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
+                  className="hidden md:inline-flex m-1 p-2 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -370,7 +408,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                 </button>
                 <button
                   type="button"
-                  className="hidden md:inline-flex m-1 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
+                  className="hidden md:inline-flex m-1 p-2 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#5a5269] text-gray-500 hover:bg-gray-300 focus:outline-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -387,9 +425,10 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                     ></path>
                   </svg>
                 </button>
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-gradient-to-tr from-[#e68e7f] to-[#df3618] hover:bg-blue-400 focus:outline-none"
+                <CustomButton
+                  type="primary"
+                  variant="success"
+                  className=""
                   onClick={handleSendMessage}
                 >
                   <span className="font-bold">Send</span>
@@ -401,7 +440,7 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
                   >
                     <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
                   </svg>
-                </button>
+                </CustomButton>
               </div>
             </div>
           </>
@@ -410,9 +449,24 @@ console.log(ChatRoomDetails, "ChatRoomDetails");
             <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">
               Hello (❁´◡`❁)
             </h1>
-            <p className="text-lg sm:text-2xl text-gray-600">
+            <p
+              className="text-lg sm:text-2xl text-gray-400 hover:text-[#5a5269] hover:underline  cursor-pointer"
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
               Choose your fav ones!
             </p>
+            <div className="flex items-center ">
+              {open && (
+                <CreateChatRoomModal
+                  signeduser={signeduser}
+                  createChatroom={createChatroom}
+                  setOpen={setOpen}
+                />
+              )}
+              
+            </div>
           </div>
         )}
       </div>

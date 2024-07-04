@@ -14,7 +14,10 @@ const ChatHeader = ({
     <div className="flex sm:items-center md:fixed space-x-4 w-full lg:w-[80%] bg-[#5a5269] z-[5] items-center md:justify-between md:p-6 p-4 border-b-2 border-gray-200">
 
       <div className="relative flex items-center space-x-4">
+        <div className="lg:hidden block">
+
       <BackArrow showLeftside={showLeftside} />
+        </div>
         <div className="relative">
           <span className="absolute text-green-500 right-0 bottom-0">
             <svg width="20" height="20">

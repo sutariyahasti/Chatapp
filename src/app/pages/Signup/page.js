@@ -97,8 +97,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="mx-auto flex w-full h-screen flex-col md:max-w-full md:flex-row md:pr-2">
-      <div className="max-w-full w-full md:w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 text-white">
+    <div className="mx-auto flex w-full h-screen flex-col md:max-w-full md:flex-row md:pr-2 justify-center">
+      <div className="max-w-full w-full hidden lg:block lg:w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 text-white">
         <div
           className="w-full h-full bg-contain bg-center bg-no-repeat"
           style={{
@@ -107,9 +107,9 @@ const Signup = () => {
           }}
         />
       </div>
-      <div className="w-full md:w-1/2 md:p-40 p-4 bg-white">
+      <div className="w-full h-screen justify-center align-middle flex flex-col lg:w-1/2 md:p-40 p-10 bg-white">
         <h2 className="mb-2 text-3xl font-bold">Sign Up</h2>
-        <a href="/pages/Login" className="mb-10 block font-bold text-gray-600">
+        <a href="/pages/Login" className="mb-10 block font-bold text-gray-600 hover:text-blue-500 cursor-pointer">
           Have an account? Login
         </a>
 

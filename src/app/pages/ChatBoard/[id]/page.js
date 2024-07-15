@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import LeftSide from "@/app/componant/LeftSide";
 import axios from "axios";
 import RightSide from "@/app/componant/Rigthside";
+import { database } from "@/firebase/firebase";
+import { child, get, ref } from "firebase/database";
 
 function ChatBoard() {
   const url = process.env.NEXT_PUBLIC_API_URL;
@@ -20,46 +22,7 @@ function ChatBoard() {
   const [rightsideShow ,setRightsideShow] = useState(false)
   const [leftsideShow ,setleftsideShow] = useState(true)
 
-  // const [socket, setSocket] = useState(null);
-
-  // useEffect(() => {
-  //   const socketInstance = io.connect(url, {
-  //     reconnection: true,
-  //     reconnectionAttempts: 10, // Number of reconnection attempts before giving up
-  //     reconnectionDelay: 1000, // Time delay in milliseconds between each reconnection attempt
-  //   });
   
-  //   setSocket(socketInstance);
-  
-  //   return () => {
-  //     if (socketInstance) {
-  //       socketInstance.disconnect();
-  //     }
-  //   };
-  
-   
-  // }, [])
-  
-  // useEffect(() => {
-  //   console.log(socket,"socket====");
-  //   if (socket) {
-      
-   
-  //   // Listen for incoming messages from the server
-  //   socket.on("initial-chats", (initialChats) => {
-  //     setMessages(initialChats);
-  //   });
-
-  //   socket.on("chat-message", (message) => {
-  //     setMessages((prevMessages) => [...prevMessages, message]);
-  //   });
-
-  //   return () => {
-  //     socket.off("chat-message");
-  //   };
-  // }
-  // }, [socket,messages]);
-
     useEffect(() => {
     const user = localStorage.getItem("LoginUserInfo");
     const parsedUser = user ? JSON.parse(user) : null;
@@ -90,29 +53,35 @@ function ChatBoard() {
     const Users = await response.json();
     setUsers(Users);
   };
-  const [error, setError] = useState(null);
 
-  const fetchChatRoomsById = async (id) => {
-      if (id) {
-      axios.get(`/api/getChatroombyid`, { params: { id } })
-          .then((response) => {
-              const data = response.data;
-              if (data.error) {
-                  setError(data.error);
-              } else {
-                setChatRoomDetails(data);
-              }
-          })
-          .catch((err) => {
-              setError('An error occurred while fetching the chatroom');
-              console.error('Error:', err);
-          });
-  }else{
-    console.log("Id is undefined");
-    alert("Id is undefined")
+ const fetchChatRoomsById = async (id) => {
+    try {
+      if (!id) {
+        console.log("Id is undefined");
+        alert("Id is undefined");
+        return;
+      }
+  
+      const dbRef = ref(database); // Reference to the root of your Realtime Database
+      const chatroomRef = child(dbRef, `Chatrooms/${id}`);
+  
+      // Fetch the chatroom details
+      const snapshot = await get(chatroomRef);
+      const chatroom = snapshot.val();
+  
+      if (chatroom) {
+        console.log("Chatroom found:", chatroom);
+        setChatRoomDetails({ ...chatroom, id });
+        return { result: [{ ...chatroom, id }], error: null };
+      } else {
+        console.log("No such chatroom document!");
+        return { result: [], error: "No such chatroom document!" };
+      }
+    } catch (error) {
+      console.error('Error fetching chatroom details:', error.message);
+      return { result: [], error: error.message };
+    }
   }
-    console.log("ChatRoomDetails", chatRoomDetails);
-  };
 
   const fetchSignedUser = async () => {
     const response = await fetch(

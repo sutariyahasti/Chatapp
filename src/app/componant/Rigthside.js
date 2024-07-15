@@ -7,6 +7,10 @@ import ChatHeader from "./ChatHeader";
 import UseName from "@/public/images/UseName";
 import CreateChatRoomModal from "./CreateChatRoomModal";
 import CustomButton from "./common/CustomButton";
+import { notify } from "./common/Toast";
+import { database } from "@/firebase/firebase";
+import { child, get, onValue, ref, serverTimestamp } from "firebase/database";
+import addData from "@/firebase/utils/addData";
 
 function RightSide({
   ChatRoomDetails,
@@ -31,36 +35,6 @@ function RightSide({
   const [socket, setSocket] = useState(null);
   const [open, setOpen] = useState(false);
 
-  console.log(ChatRoomDetails, "ChatRoomDetails");
-  useEffect(() => {
-    if (!url) {
-      console.error("NEXT_PUBLIC_API_URL is not set");
-      return;
-    }
-    const socketInstance = io.connect(url, {
-      reconnection: true,
-      reconnectionAttempts: 10, // Number of reconnection attempts before giving up
-      reconnectionDelay: 1000, // Time delay in milliseconds between each reconnection attempt
-    });
-
-    setSocket(socketInstance);
-
-    socketInstance.on("initial-chats", (initialChats) => {
-      setChats(initialChats);
-    });
-
-    socketInstance.on("chat", (message) => {
-      setChats((prevMessages) => [...prevMessages, message]);
-    });
-    socketInstance.on("connect_error", (err) => {
-      console.error("Connection error:", err);
-    });
-    return () => {
-      if (socketInstance) {
-        socketInstance.disconnect();
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -75,59 +49,66 @@ function RightSide({
   }, [userId]);
 
   useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        const response = await axios.get(`/api/getAllChats`, {
-          params: { id: ChatRoomDetails?._id },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+    if (!ChatRoomDetails?.id) return;
+
+    const dbRef = ref(database); // Reference to the root of your Realtime Database
+    const messagesRef = child(dbRef, 'messages');
+    
+    // Set up a real-time listener
+    const unsubscribe = onValue(messagesRef, (snapshot) => {
+      const messages = snapshot.val();
+      console.log(messages, "Fetched Messages");
+
+      // Process and set the messages
+      const chatMessages = [];
+      if (messages) {
+        Object.keys(messages).forEach((key) => {
+          const message = messages[key];
+          if (message.chatRoom === ChatRoomDetails.id) {
+            chatMessages.push({ ...message, id: key });
+          }
         });
-
-        if (response.status === 200) {
-          setChats(response.data.userChats);
-          setError(null);
-        } else {
-          setError(response.data.error || "An error occurred");
-        }
-      } catch (err) {
-        setError("An error occurred while fetching the chat messages.");
+         // Sort messages by createdAt timestamp
+         chatMessages.sort((a, b) => a.createdAt - b.createdAt);
       }
-    };
 
-    if (ChatRoomDetails) {
-      fetchChats();
-    }
-  }, [ChatRoomDetails, messages]);
+      setChats(chatMessages);
+    }, (error) => {
+      console.error('Error fetching chatrooms:', error.message);
+    });
 
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, [ChatRoomDetails]);
+ 
+  
+  function generateChatroomId(userId, id) {
+    const timestamp = Date.now(); // Get the current timestamp
+    const randomValue = Math.random().toString(36).substring(2, 15); // Generate a random value
+    return `${userId}_${id}_${timestamp}_${randomValue}====`; // Combine all elements to form the unique ID
+}
   const createChatroom = async (id, name, url) => {
-    try {
-      const response = await axios.post(
-        `/api/createchatroom`,
-        {
-          chatName: username,
-          user1Name: username,
-          user2Name: name,
-          user1: userId,
-          user2: id,
-          user1url: loginUserProfile,
-          user2url: url,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+    const collection = 'Chatrooms';
+    const chatroomId = generateChatroomId(userId, id) // Create a unique ID based on user IDs
+    const data = {
+      chatName: username,
+      user1Name: username,
+      user2Name: name,
+      user1: userId,
+      user2: id,
+      user1url: loginUserProfile,
+      user2url: url,
+    };
+  
+    const { result, error } = await addData(collection, chatroomId, data);
+  console.log(result,"re");
+    if (result) {
+      console.log("Document written with ID: ", chatroomId);
+      notify("User created");
       setOpen(false);
-      if (response.status === 201) {
-        alert("user created");
-        setOpen(false);
-      }
-    } catch {
-      console.log("error in creating chatrooms");
-      alert(`You have already chat with ${name} ${id}`);
+    } else {
+      console.log("Error in creating chatrooms: ", error);
+      notify(`You have already chat with ${name} ${id}`);
     }
   };
 
@@ -141,25 +122,34 @@ function RightSide({
     }
   };
 
+  const removeUndefinedFields = (obj) => {
+    return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined));
+  };
+  
   const handleSendMessage = async () => {
+    const randomValue = Math.random().toString(36).substring(2, 15);
+    const timestamp = Date.now();
     if (messages) {
       try {
-        const response = await axios.post(
-          `${url}/api/sendchat`,
-          {
-            chatRoom: ChatRoomDetails?._id,
-            sender: loginuser?._id || userId,
-            content: messages,
-            chatName: ChatRoomDetails?.chatName,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        socket.emit("chat", JSON.stringify(response.data.message));
+        // Create message object
+        const collection = 'messages';
+        const messageObj = {
+          chatRoom: ChatRoomDetails?.id,
+          sender: loginuser?._id || userId,
+          receiver: ChatRoomDetails?.user1 === userId
+          ? ChatRoomDetails?.user2
+          : ChatRoomDetails?.user1,
+          content: messages,
+          chatName: ChatRoomDetails?.chatName,
+          createdAt: timestamp
+        };
+        const messageId = `${ChatRoomDetails?.id}_${randomValue}`;
+        // Remove undefined fields
+        const sanitizedMessageObj = removeUndefinedFields(messageObj);
+        
+        const { result, error } = await addData(collection, messageId, sanitizedMessageObj);
+        console.log("Document written with ID: ", messageId);
+    
         setMessages("");
       } catch (error) {
         console.error("Error sending chat:", error.message);
@@ -220,7 +210,7 @@ function RightSide({
           rightsideShow === true ? "flex" : "hidden"
         }`}
       >
-        {ChatRoomDetails && ChatRoomDetails._id ? (
+        {ChatRoomDetails && ChatRoomDetails.id ? (
           <>
             {/* ChatHeader */}
             <div className="md:h-[12%] ">
@@ -429,7 +419,7 @@ function RightSide({
                   </svg>
                 </button>
                 <CustomButton
-                  type="primary"
+                  // variant="primary"
                   variant="success"
                   className=""
                   onClick={handleSendMessage}

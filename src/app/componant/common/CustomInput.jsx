@@ -19,6 +19,11 @@ const CustomInput = ({
   const disabledStyle = isDisabled ? "cursor-not-allowed opacity-50" : "";
   const iconPaddingStyle = leftIcon || rightIcon ? "pl-10 pr-10" : "";
 
+  // Style to disable autofill
+  const autofillStyle = {
+    WebkitBoxShadow: "0 0 0 1000px white inset", // Override autofill background color
+  };
+
   return (
     <div className={`relative ${className}`}>
       {leftIcon && (
@@ -33,6 +38,7 @@ const CustomInput = ({
         onChange={onChange}
         placeholder={placeholder}
         className={`${baseStyle} ${sizeStyle} ${iconPaddingStyle} ${disabledStyle} w-full`}
+        style={autofillStyle} 
         disabled={isDisabled}
       />
       {rightIcon && (

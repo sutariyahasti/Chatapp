@@ -5,7 +5,7 @@ import LeftSide from "@/app/componant/LeftSide";
 import axios from "axios";
 import RightSide from "@/app/componant/Rigthside";
 import { database } from "@/firebase/firebase";
-import { child, get, ref } from "firebase/database";
+import { child, get, onValue, ref } from "firebase/database";
 
 function ChatBoard() {
   const url = process.env.NEXT_PUBLIC_API_URL;
@@ -19,11 +19,10 @@ function ChatBoard() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [chatRoomDetails, setChatRoomDetails] = useState();
   const router = useRouter();
-  const [rightsideShow ,setRightsideShow] = useState(false)
-  const [leftsideShow ,setleftsideShow] = useState(true)
-
-  
-    useEffect(() => {
+  const [rightsideShow, setRightsideShow] = useState(false)
+  const [leftsideShow, setleftsideShow] = useState(true)
+  const [latestMessages, setLatestMessages] = useState({});
+  useEffect(() => {
     const user = localStorage.getItem("LoginUserInfo");
     const parsedUser = user ? JSON.parse(user) : null;
     const id = localStorage.getItem("id");
@@ -33,12 +32,59 @@ function ChatBoard() {
       router.push("/pages/Login");
     }
   }, [messages]);
-  useEffect(()=>{
+  useEffect(() => {
     fetchSignedUser();
+  }, [])
 
-  },[])
+  useEffect(() => {
+    const dbRef = ref(database); // Reference to the root of your Realtime Database
+    const messagesRef = child(dbRef, "messages");
+
+    // Set up a real-time listener
+    const unsubscribe = onValue(
+      messagesRef,
+      (snapshot) => {
+        const messages = snapshot.val();
+        const chatMessages = [];
+        if (messages) {
+          var latestMessagesMap = {};
+          Object.keys(messages).forEach((key) => {
+            const message = messages[key];
+            // if (message.chatRoom === chatRoomDetails.id) {
+              chatMessages.push({ ...message, id: key });
+            
+            const chatRoomId = message.chatRoom;
+
+            if (!latestMessagesMap[chatRoomId]) {
+              latestMessagesMap[chatRoomId] = message;
+            } else if (
+              message.createdAt > latestMessagesMap[chatRoomId].createdAt
+            ) {
+              latestMessagesMap[chatRoomId] = message;
+            }
+          // }
+          });
+          if (latestMessagesMap) {
+            if (!Array.isArray(latestMessagesMap)) {
+              // Assuming latestMessagesMap is an object, convert it to an array of its values
+              latestMessagesMap = Object.values(latestMessagesMap);
+            }
+          latestMessagesMap && latestMessagesMap?.sort((a, b) => a.createdAt - b.createdAt);
+          }
+          setLatestMessages(latestMessagesMap);
+        }
+        // setChats(chatMessages);
+      },
+      (error) => {
+        console.error("Error fetching messages:", error.message);
+      }
+    );
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, [chatRoomDetails]);
   const fetchUserbyid = async (id) => {
-    console.log(id,"id----------chat");
+   
     const response = await fetch(
       `/api/alluser/` + id,
 
@@ -116,6 +162,7 @@ function ChatBoard() {
             leftsideShow={leftsideShow}
             setRightsideShow={setRightsideShow}
             rightsideShow={rightsideShow}
+            latestMessages={latestMessages}
           />
         </div>
 

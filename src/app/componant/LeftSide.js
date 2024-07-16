@@ -21,6 +21,7 @@ const LeftSide = ({
   setleftsideShow,
   leftsideShow,
   setRightsideShow,
+  latestMessages
 }) => {
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
@@ -246,10 +247,25 @@ const LeftSide = ({
                     <h5 className="font-medium">
                       {user.user1 === userId ? user.user2Name : user.user1Name}
                     </h5>
-                    <p className="flex items-center text-xs ">
-                      Hello, how are you?
-                      <span className="ml-1 text-xs">. 12 min</span>
-                    </p>
+                    {latestMessages.filter(msg => msg.chatRoom === user.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((msg, index) => (
+                      <p className="flex items-center text-xs">
+                        {msg.content} &nbsp; &nbsp;
+                        {Math.round((Date.now() - msg.createdAt) / 60000) < 60 ? (
+                          <span className="ml-1 text-xs">
+                            {Math.round((Date.now() - msg.createdAt) / 60000)} min
+                          </span>
+                        ) : (
+                          <span className="ml-1 text-xs">
+                            {new Date(msg.createdAt).toLocaleTimeString("en-IN", {
+                              hour: "numeric",
+                              minute: "numeric",
+                              hour12: true,
+                              timeZone: "Asia/Kolkata",
+                            })}
+                          </span>
+                        )}
+                      </p>
+                    ))}
                   </div>
                   <div className="flex h-6 w-6 m-1 items-center justify-center rounded-full bg-[#ebdddd52]">
                     <span className="text-sm font-medium text-white">3</span>

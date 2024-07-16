@@ -99,7 +99,7 @@ const Login = () => {
 
             <CustomInput
               name="email"
-                type="email"
+              type="email"
               onChange={handleInputChange}
               placeholder="Email Address"
               leftIcon={<User />}

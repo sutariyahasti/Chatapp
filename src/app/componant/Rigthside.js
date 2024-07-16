@@ -84,8 +84,8 @@ function RightSide({
   
   function generateChatroomId(userId, id) {
     const timestamp = Date.now(); // Get the current timestamp
-    const randomValue = Math.random().toString(36).substring(2, 15); // Generate a random value
-    return `${userId}_${id}_${timestamp}_${randomValue}====`; // Combine all elements to form the unique ID
+    // const randomValue = Math.random().toString(36).substring(2, 15); // Generate a random value
+    return `${timestamp}`; // Combine all elements to form the unique ID
 }
   const createChatroom = async (id, name, url) => {
     const collection = 'Chatrooms';

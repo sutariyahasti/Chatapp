@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const CreateChatRoomModal = ({ signeduser, createChatroom, setOpen }) => {
   const [chatname, setChatname] = useState("");
-
+  const id = localStorage.getItem("id");
   const handleInputChange = (event) => {
     const name = event.target.value;
     setChatname(name);
@@ -53,8 +53,10 @@ const CreateChatRoomModal = ({ signeduser, createChatroom, setOpen }) => {
           /> */}
           <div className="truncate overflow-auto">
             {signeduser &&
-              signeduser.length > 0 &&
+              signeduser.length > 0 && 
               signeduser.map((user, index) => (
+                <>
+                {id !== user._id  && 
                 <Link
                   href={"#"}
                   className="flex bg-[#0606063b] text-gray-200 rounded-xl m-1 items-center gap-5 py-3 px-7.5 hover:bg-tan"
@@ -78,6 +80,8 @@ const CreateChatRoomModal = ({ signeduser, createChatroom, setOpen }) => {
                     <div className="flex h-5 w-5 m-2 items-center justify-center rounded-full bg-[#50c960]"></div>
                   </div>
                 </Link>
+              }
+              </>
               ))}
           </div>
           {/* <button

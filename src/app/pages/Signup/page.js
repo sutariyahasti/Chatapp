@@ -10,6 +10,7 @@ import Password from "@/public/images/Password";
 import UseName from "@/public/images/UseName";
 import CustomButton from "@/app/componant/common/CustomButton";
 import { notify } from "@/app/componant/common/Toast";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -19,6 +20,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   // image upload
   const [file, setFile] = useState(null);
@@ -26,7 +28,10 @@ const Signup = () => {
   const [urls, setUrls] = useState();
   const [loading, setLoading] = useState(false);
   const { edgestore } = useEdgeStore();
-  console.log(urls?.url, "urls?.url");
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -121,30 +126,37 @@ const Signup = () => {
         />
         <CustomInput
           name="email"
+          type="email"
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email Address"
           leftIcon={<User />}
         />
         <CustomInput
           name="password"
+          type={showPassword ? "text" : "password"}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           leftIcon={<Password />}
+          rightIcon={
+            <span onClick={togglePasswordVisibility}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          }
         />
 
         <div className="flex items-center justify-center w-full rounded-2xl my-4">
           <label className="flex flex-col rounded-lg border-4 w-full border-dashed p-10 group text-center">
             <div className="text-center flex flex-col items-center justify-center">
-              <p className="pointer-none text-gray-500">
-                <a href="#" className="text-blue-600 hover:underline">
+              <p className="pointer-none text-blue-500 hover:underline">
+                {/* <a href="#" className="text-blue-600 hover:underline"> */}
                   Upload profile
-                </a>
+                {/* </a> */}
               </p>
             </div>
             <input type="file" className="hidden" onChange={handleFileChange} />
           </label>
         </div>
-        <div className="h-[6px] w-44 border rounded overflow-hidden mt-4 mx-auto">
+        <div className="h-[6px] w-44 border rounded overflow-hidden mx-auto">
           <div
             className="h-full bg-blue-500 transition-all duration-150 text-white"
             style={{
@@ -158,7 +170,7 @@ const Signup = () => {
           </div>
         )}
         {urls && urls?.url && (
-          <div className="flex m-2 w-full justify-center items-center">
+          <div className="flex m-1 w-full justify-center items-center">
             <img
               src={urls.url}
               alt=""

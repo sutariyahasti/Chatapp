@@ -9,7 +9,7 @@ import { notify } from "./common/Toast";
 import { child, get, ref } from "firebase/database";
 import { database } from "@/firebase/firebase";
 import addData from "@/firebase/utils/addData";
-import Logout from "@/public/images/svgs/Logout";
+// import { database } from "@/firebase/firebase";
 
 const LeftSide = ({
   allusers,
@@ -53,18 +53,22 @@ const LeftSide = ({
     if (userId) {
       async function fetchChatrooms() {
         try {
-          const dbRef = ref(database);
+          const dbRef = ref(database); // Reference to the root of your Realtime Database
 
+          // Query for chatrooms where user1 equals userId
           const q1 = child(dbRef, "Chatrooms");
           const snapshot1 = await get(q1);
           const querySnapshot1 = snapshot1.val();
 
+          // Query for chatrooms where user2 equals userId
           const q2 = child(dbRef, "Chatrooms");
           const snapshot2 = await get(q2);
           const querySnapshot2 = snapshot2.val();
 
+          // Combine and process the results
           const combinedResults = [];
 
+          // Process querySnapshot1
           if (querySnapshot1) {
             Object.keys(querySnapshot1).forEach((key) => {
               const chatroom = querySnapshot1[key];
@@ -74,6 +78,7 @@ const LeftSide = ({
             });
           }
 
+          // Process querySnapshot2
           if (querySnapshot2) {
             Object.keys(querySnapshot2).forEach((key) => {
               const chatroom = querySnapshot2[key];
@@ -83,8 +88,10 @@ const LeftSide = ({
             });
           }
           setUsers(combinedResults);
+          // Return combined results
           return { result: combinedResults, error: null };
         } catch (error) {
+          // Handle errors
           console.error("Error fetching chatrooms:", error.message);
           return { result: null, error: error.message };
         }
@@ -92,7 +99,7 @@ const LeftSide = ({
       fetchChatrooms();
     }
   }, [userId, open]);
-
+  console.log(users, "users");
   const getChatroomByUsers = async (user1, user2) => {
     const dbRef = ref(database);
     try {
@@ -105,7 +112,7 @@ const LeftSide = ({
             (chatroom.user1 === user1 && chatroom.user2 === user2) ||
             (chatroom.user1 === user2 && chatroom.user2 === user1)
           ) {
-            return chatroomId;
+            return chatroomId; // Return the matching chatroom ID
           }
         }
       }
@@ -114,17 +121,16 @@ const LeftSide = ({
     }
     return null;
   };
-
   function generateChatroomId(userId, id) {
-    const timestamp = Date.now();
-    const randomValue = Math.random().toString(36).substring(2, 20);
-    return `${timestamp}`;
+    const timestamp = Date.now(); // Get the current timestamp
+    const randomValue = Math.random().toString(36).substring(2, 20); // Generate a random value
+    return `${timestamp}`; // Combine all elements to form the unique ID
   }
 
   const createChatroom = async (id, name, url) => {
     const chatroomId = generateChatroomId(userId, id);
     const collection = "Chatrooms";
-
+    // Check if chatroom already exists
     const existingChatroom = await getChatroomByUsers(userId, id);
 
     if (existingChatroom) {
@@ -160,20 +166,15 @@ const LeftSide = ({
     setleftsideShow(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("name");
-    localStorage.removeItem("id");
-    localStorage.removeItem("url");
-    window.location.href = "/"; // Redirect to the login or home page
-  };
-
   return (
     <div
       className={`py-4 pl-4 pr-4 lg:pr-0 lg:block h-screen ${
         leftsideShow === true ? "block" : "hidden"
       }`}
     >
+      {/* <div className="w-40 h-40  absolute backdrop-blur-sm bg-black/30"></div> */}
       <div
+        // className="min-h-screen col-span-12 rounded-sm border border-stroke bg-white pb-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-6 sm:col-span-6"
         className={`rounded-xl h-full p-3 overflow-auto  no-scrollbar lg:block col-span-12  bg-[#cec6c63a] text-gray-300  shadow-default md:col-span-6 sm:col-span-6 ${
           leftsideShow === true ? "block" : "hidden"
         }`}
@@ -258,13 +259,6 @@ const LeftSide = ({
               </Link>
             ))}
         </div>
-        <button
-          type="button"
-          className=" inline-flex items-center justify-center rounded-lg border h-10 w-14 transition duration-500 ease-in-out text-gray-200 hover:bg-red-500 focus:outline-none absolute bottom-8 left-80"
-          onClick={handleLogout}
-        >
-          <Logout />
-        </button>
       </div>
     </div>
   );

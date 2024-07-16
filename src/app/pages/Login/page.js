@@ -6,23 +6,17 @@ import User from "@/public/images/User";
 import Password from "@/public/images/Password";
 import CustomButton from "@/app/componant/common/CustomButton";
 import CustomInput from "@/app/componant/common/CustomInput";
-import { notify } from "@/app/componant/common/Toast";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import  { notify } from "@/app/componant/common/Toast";
 
 const Login = () => {
   const router = useRouter();
   const url = process.env.NEXT_PUBLIC_API_URL;
   console.log(`${url}/api/login`);
-  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     token: "",
   });
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -100,24 +94,17 @@ const Login = () => {
 
             <CustomInput
               name="email"
-              type="email"
               onChange={handleInputChange}
               placeholder="Email Address"
               leftIcon={<User />}
             />
             <CustomInput
               name="password"
-              type={showPassword ? "text" : "password"}
               onChange={handleInputChange}
               placeholder="Password"
               leftIcon={<Password />}
-              rightIcon={
-                <span onClick={togglePasswordVisibility}>
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </span>
-              }
             />
-           
+
             <CustomButton
               variant="primary"
               size="lg"

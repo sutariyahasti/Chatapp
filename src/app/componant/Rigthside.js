@@ -11,6 +11,8 @@ import { notify } from "./common/Toast";
 import { database } from "@/firebase/firebase";
 import { child, get, onValue, ref, serverTimestamp } from "firebase/database";
 import addData from "@/firebase/utils/addData";
+import updateData from "@/firebase/utils/updateData";
+import { formatDate } from "../lib/FormatTime";
 
 function RightSide({
   ChatRoomDetails,
@@ -52,7 +54,7 @@ function RightSide({
     if (!ChatRoomDetails?.id) return;
 
     const dbRef = ref(database); // Reference to the root of your Realtime Database
-    const messagesRef = child(dbRef, 'messages');
+    const messagesRef = child(dbRef, 'Messages');
     
     // Set up a real-time listener
     const unsubscribe = onValue(messagesRef, (snapshot) => {
@@ -128,12 +130,12 @@ function RightSide({
   const handleSendMessage = async () => {
     const randomValue = Math.random().toString(36).substring(2, 15);
     const timestamp = Date.now();
-    if (messages) {
-      try {
-        // Create message object
-        const collection = 'messages';
-        const messageObj = {
-          chatRoom: ChatRoomDetails?.id,
+    const collection = "Chatrooms";
+    const messagesCollection = "Messages";
+  
+    // Create the message object
+    const message = {
+      chatRoom: ChatRoomDetails?.id,
           sender: loginuser?._id || userId,
           receiver: ChatRoomDetails?.user1 === userId
           ? ChatRoomDetails?.user2
@@ -141,50 +143,35 @@ function RightSide({
           content: messages,
           chatName: ChatRoomDetails?.chatName,
           createdAt: timestamp
-        };
-        const messageId = `${ChatRoomDetails?.id}_${randomValue}`;
-        // Remove undefined fields
-        const sanitizedMessageObj = removeUndefinedFields(messageObj);
-        
-        const { result, error } = await addData(collection, messageId, sanitizedMessageObj);
-        console.log("Document written with ID: ", messageId);
-    
-        setMessages("");
-      } catch (error) {
-        console.error("Error sending chat:", error.message);
-      }
+    };
+    const messageId = `${ChatRoomDetails?.id}_${randomValue}`;
+  const chatroomId = `${ChatRoomDetails?.id}`
+    try {
+      // Add the message to the Messages collection (or however you are storing messages)
+      const { result, error } = await addData(messagesCollection, messageId, message);
+      
+      if (error) throw new Error(error);
+  
+      // Update the latestMessages field in the chatroom
+      const chatroomUpdate = {
+        latestMessages: message.content,
+        createdAt: timestamp
+      };
+  
+      const { result: chatroomResult, error: chatroomError } = await updateData(collection, chatroomId, chatroomUpdate);
+      if (chatroomError) throw new Error(chatroomError);
+  
+      notify("Message sent");
+      setMessages("");
+    } catch (error) {
+      console.log("Error in sending message: ", error);
+      notify("Error in sending message");
     }
   };
 
   const getUserProfile = (id) => {
     getprofile(id);
     setProfile(true);
-  };
-  const formatDate = (timestamp) => {
-    const date = new Date(timestamp);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    if (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    ) {
-      return "Today";
-    } else if (
-      date.getDate() === yesterday.getDate() &&
-      date.getMonth() === yesterday.getMonth() &&
-      date.getFullYear() === yesterday.getFullYear()
-    ) {
-      return "Yesterday";
-    } else {
-      // Manually format the date as dd MMM yyyy
-      const day = date.getDate().toString().padStart(2, "0");
-      const month = date.toLocaleString("en-US", { month: "short" });
-      const year = date.getFullYear();
-      return `${day} ${month} ${year}`;
-    }
   };
 
   const showLeftside = () => {

@@ -6,10 +6,11 @@ import { useEffect, useState } from "react";
 import CreateChatRoomModal from "./CreateChatRoomModal";
 import UseName from "@/public/images/UseName";
 import { notify } from "./common/Toast";
-import { child, get, ref } from "firebase/database";
+import { child, get, off, onValue, ref } from "firebase/database";
 import { database } from "@/firebase/firebase";
 import addData from "@/firebase/utils/addData";
 import Logout from "@/public/images/Logout";
+import { formatTime } from "../lib/FormatTime";
 
 const LeftSide = ({
   allusers,
@@ -21,7 +22,8 @@ const LeftSide = ({
   setleftsideShow,
   leftsideShow,
   setRightsideShow,
-  latestMessages
+  latestMessages,
+  messages
 }) => {
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
@@ -52,45 +54,30 @@ const LeftSide = ({
 
   useEffect(() => {
     if (userId) {
-      async function fetchChatrooms() {
-        try {
-          const dbRef = ref(database);
+      const dbRef = ref(database);
+      const chatroomsRef = child(dbRef, "Chatrooms");
 
-          const q1 = child(dbRef, "Chatrooms");
-          const snapshot1 = await get(q1);
-          const querySnapshot1 = snapshot1.val();
+      const handleChatroomsChange = (snapshot) => {
+        const data = snapshot.val();
+        const combinedResults = [];
 
-          const q2 = child(dbRef, "Chatrooms");
-          const snapshot2 = await get(q2);
-          const querySnapshot2 = snapshot2.val();
-
-          const combinedResults = [];
-
-          if (querySnapshot1) {
-            Object.keys(querySnapshot1).forEach((key) => {
-              const chatroom = querySnapshot1[key];
-              if (chatroom.user1 === userId) {
-                combinedResults.push({ ...chatroom, id: key });
-              }
-            });
-          }
-
-          if (querySnapshot2) {
-            Object.keys(querySnapshot2).forEach((key) => {
-              const chatroom = querySnapshot2[key];
-              if (chatroom.user2 === userId) {
-                combinedResults.push({ ...chatroom, id: key });
-              }
-            });
-          }
-          setUsers(combinedResults);
-          return { result: combinedResults, error: null };
-        } catch (error) {
-          console.error("Error fetching chatrooms:", error.message);
-          return { result: null, error: error.message };
+        if (data) {
+          Object.keys(data).forEach((key) => {
+            const chatroom = data[key];
+            if (chatroom.user1 === userId || chatroom.user2 === userId) {
+              combinedResults.push({ ...chatroom, id: key });
+            }
+          });
         }
-      }
-      fetchChatrooms();
+        combinedResults.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        setUsers(combinedResults);
+      };
+
+      onValue(chatroomsRef, handleChatroomsChange);
+
+      return () => {
+        off(chatroomsRef, "value", handleChatroomsChange);
+      };
     }
   }, [userId, open]);
 
@@ -142,6 +129,8 @@ const LeftSide = ({
       user2: id,
       user1url: Profile,
       user2url: url,
+      latestMessages : messages || null,
+      createdAt: Date.now()
     };
 
     try {
@@ -246,28 +235,16 @@ const LeftSide = ({
                     <h5 className="font-medium">
                       {user.user1 === userId ? user.user2Name : user.user1Name}
                     </h5>
-                    {latestMessages.length > 0  && latestMessages.filter(msg => msg.chatRoom === user.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((msg, index) => (
+                    {user.latestMessages && user.latestMessages}
+                    </div>
+                    <div>
                       <p className="flex items-center text-xs">
-                        {msg.content} &nbsp; &nbsp;
-                        {Math.round((Date.now() - msg.createdAt) / 60000) < 60 ? (
-                          <span className="ml-1 text-xs">
-                            {Math.round((Date.now() - msg.createdAt) / 60000)} min
-                          </span>
-                        ) : (
-                          <span className="ml-1 text-xs">
-                            {new Date(msg.createdAt).toLocaleTimeString("en-IN", {
-                              hour: "numeric",
-                              minute: "numeric",
-                              hour12: true,
-                              timeZone: "Asia/Kolkata",
-                            })}
-                          </span>
-                        )}
+                        
+                      {user.createdAt ? formatTime(user.createdAt) : null}
                       </p>
-                    ))}
+                      <div className="flex h-5 w-5 m-1 items-center justify-center rounded-full bg-[#ebdddd52]">
+                    <span className="text-xs font-medium text-white">3</span>
                   </div>
-                  <div className="flex h-6 w-6 m-1 items-center justify-center rounded-full bg-[#ebdddd52]">
-                    <span className="text-sm font-medium text-white">3</span>
                   </div>
                 </div>
               </Link>

@@ -1,4 +1,4 @@
- export const formatTime = (createdAt) => {
+export const formatTime = (createdAt) => {
     const now = Date.now();
     const elapsedMinutes = Math.round((now - createdAt) / 60000);
     const elapsedHours = Math.round(elapsedMinutes / 60);
@@ -10,7 +10,12 @@
     } else if (elapsedMinutes < 60) {
       return `${elapsedMinutes} min`;
     } else if (elapsedHours < 24) {
-      return `${elapsedHours} hr`;
+      return new Date(createdAt).toLocaleTimeString("en-IN", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+        timeZone: "Asia/Kolkata",
+      });
     } else if (elapsedDays === 1) {
       return 'Yesterday';
     } else if (elapsedDays < 7) {
@@ -31,6 +36,7 @@
       });
     }
   };
+
 
  export const formatDate = (timestamp) => {
     const date = new Date(timestamp);

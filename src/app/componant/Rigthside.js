@@ -57,8 +57,7 @@ function RightSide({
     // Set up a real-time listener
     const unsubscribe = onValue(messagesRef, (snapshot) => {
       const messages = snapshot.val();
-      console.log(messages, "Fetched Messages");
-
+      
       // Process and set the messages
       const chatMessages = [];
       if (messages) {

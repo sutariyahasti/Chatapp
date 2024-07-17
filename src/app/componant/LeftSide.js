@@ -167,7 +167,6 @@ const LeftSide = ({
     localStorage.removeItem("url");
     window.location.href = "/"; // Redirect to the login or home page
   };
-
   return (
     <div
       className={`py-4 pl-4 pr-4 lg:pr-0 lg:block h-screen ${
@@ -247,7 +246,7 @@ const LeftSide = ({
                     <h5 className="font-medium">
                       {user.user1 === userId ? user.user2Name : user.user1Name}
                     </h5>
-                    {latestMessages.filter(msg => msg.chatRoom === user.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((msg, index) => (
+                    {latestMessages.length > 0  && latestMessages.filter(msg => msg.chatRoom === user.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((msg, index) => (
                       <p className="flex items-center text-xs">
                         {msg.content} &nbsp; &nbsp;
                         {Math.round((Date.now() - msg.createdAt) / 60000) < 60 ? (

@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 import CreateChatRoomModal from "./CreateChatRoomModal";
 import UseName from "@/public/images/UseName";
 import { notify } from "./common/Toast";
-import { child, get, off, onValue, ref } from "firebase/database";
+import { child, get, off, onValue, ref, remove } from "firebase/database";
 import { database } from "@/firebase/firebase";
 import addData from "@/firebase/utils/addData";
 import Logout from "@/public/images/Logout";
 import { formatTime } from "../lib/FormatTime";
+import DropDown from "@/public/images/DropDown";
 
 const LeftSide = ({
   allusers,
@@ -22,7 +23,6 @@ const LeftSide = ({
   setleftsideShow,
   leftsideShow,
   setRightsideShow,
-  latestMessages,
   messages
 }) => {
   const [users, setUsers] = useState([]);
@@ -31,6 +31,7 @@ const LeftSide = ({
   const [userId, setUserId] = useState("");
   const [error, setError] = useState(null);
   const [Profile, setProfile] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(null)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -156,6 +157,21 @@ const LeftSide = ({
     localStorage.removeItem("url");
     window.location.href = "/"; // Redirect to the login or home page
   };
+  const [isOpen, setIsOpen] = useState(false); // State to manage dropdown visibility
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen); // Toggles the dropdown menu visibility
+  };
+
+  const handleItemdelet = async (item) => {
+    try {
+      await remove(ref(database, `Chatrooms/${item}`));
+      console.log('Chat room deleted successfully');
+    } catch (error) {
+      console.error('Error deleting chat room:', error);
+    }
+    setIsOpen(false); // Close the dropdown after selection (if needed)
+  };
   return (
     <div
       className={`py-4 pl-4 pr-4 lg:pr-0 lg:block h-screen ${
@@ -206,7 +222,7 @@ const LeftSide = ({
             </button>
           </div>
         </div>
-        <div className="overflow-auto">
+        <div className="overflow-auto h-full">
           {users &&
             users.length > 0 &&
             users.map((user, index) => (
@@ -215,6 +231,8 @@ const LeftSide = ({
                 className="flex items-center gap-1 py-3 px-7.5 hover:bg-tan rounded-xl my-1 p-1 hover:text-yellow-50 "
                 onClick={() => getChatRoomsById(user.id)}
                 key={index}
+                onMouseEnter={()=>{setShowDropdown(user.id)}}
+                onMouseLeave={()=>{setShowDropdown(null); setIsOpen(false)}}
               >
                 <div className="relative h-15 w-15 rounded-full">
                   {user.user2url || user.user1url ? (
@@ -247,6 +265,27 @@ const LeftSide = ({
                   </div>
                   </div>
                 </div>
+                {showDropdown == user.id &&
+                  <div className="relative inline-block text-left mt-2 bg-transparent  shadow-lg rounded-lg z-10" onClick={toggleMenu}>
+                    <DropDown onClick={toggleMenu} />
+                    {isOpen && (
+                      <div
+                        className=" absolute right-0 mt-2 inline-block w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                      >
+                        <div className="py-1 h-full" role="none">
+                          <button
+                            onClick={() => handleItemdelet(user.id)}
+                            className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                            role="menuitem"
+                          >
+                            Delet chatRoom
+                          </button>
+
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                }
               </Link>
             ))}
         </div>

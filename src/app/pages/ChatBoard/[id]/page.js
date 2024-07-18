@@ -21,7 +21,7 @@ function ChatBoard() {
   const router = useRouter();
   const [rightsideShow, setRightsideShow] = useState(false)
   const [leftsideShow, setleftsideShow] = useState(true)
-  const [latestMessages, setLatestMessages] = useState({});
+
   useEffect(() => {
     const user = localStorage.getItem("LoginUserInfo");
     const parsedUser = user ? JSON.parse(user) : null;
@@ -36,53 +36,7 @@ function ChatBoard() {
     fetchSignedUser();
   }, [])
 
-  useEffect(() => {
-    const dbRef = ref(database); // Reference to the root of your Realtime Database
-    const messagesRef = child(dbRef, "messages");
 
-    // Set up a real-time listener
-    const unsubscribe = onValue(
-      messagesRef,
-      (snapshot) => {
-        const messages = snapshot.val();
-        const chatMessages = [];
-        if (messages) {
-          var latestMessagesMap = {};
-          Object.keys(messages).forEach((key) => {
-            const message = messages[key];
-            // if (message.chatRoom === chatRoomDetails.id) {
-              chatMessages.push({ ...message, id: key });
-            
-            const chatRoomId = message.chatRoom;
-
-            if (!latestMessagesMap[chatRoomId]) {
-              latestMessagesMap[chatRoomId] = message;
-            } else if (
-              message.createdAt > latestMessagesMap[chatRoomId].createdAt
-            ) {
-              latestMessagesMap[chatRoomId] = message;
-            }
-          // }
-          });
-          if (latestMessagesMap) {
-            if (!Array.isArray(latestMessagesMap)) {
-              // Assuming latestMessagesMap is an object, convert it to an array of its values
-              latestMessagesMap = Object.values(latestMessagesMap);
-            }
-          latestMessagesMap && latestMessagesMap?.sort((a, b) => a.createdAt - b.createdAt);
-          }
-          setLatestMessages(latestMessagesMap);
-        }
-        // setChats(chatMessages);
-      },
-      (error) => {
-        console.error("Error fetching messages:", error.message);
-      }
-    );
-
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, [chatRoomDetails]);
   const fetchUserbyid = async (id) => {
    
     const response = await fetch(
@@ -162,7 +116,6 @@ function ChatBoard() {
             leftsideShow={leftsideShow}
             setRightsideShow={setRightsideShow}
             rightsideShow={rightsideShow}
-            latestMessages={latestMessages}
           />
         </div>
 

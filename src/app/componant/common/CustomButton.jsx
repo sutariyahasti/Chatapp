@@ -29,7 +29,7 @@ const CustomButton = ({
         "lg:my-0 my-2 group rounded-full relative inline-flex items-center justify-start lg:px-6 py-3 px-4 overflow-hidden font-bold border border-crimson-Purple-border text-crimson-Purple-text hover:bg-gradient-to-r hover:bg-crimson-Purple hover:text-white transition-all";
       break;
     case "success":
-      variantStyle = "text-white text-center font-semibold lg:my-2 my-2 group rounded-lg relative inline-flex items-center justify-center lg:px-6 py-3 px-4 overflow-hidden font-bold bg-gradient-to-r from-[#e68e7f] to-[#995a4f] hover:bg-gradient-to-r hover:from-[#995a4f] hover:to-[#e68e7f] transition-all";
+      variantStyle = "text-white text-center font-semibold lg:my-2 my-2 group rounded-lg relative inline-flex items-center justify-center lg:px-6 py-3 px-4 overflow-hidden font-bold bg-gradient-to-r from-[#0505057a] to-[#888585] hover:bg-gradient-to-r hover:from-[#888585] hover:to-[#0505057a]  transition-all";
       break;
     case "danger":
       variantStyle = "bg-red-500 hover:bg-red-700 text-white";

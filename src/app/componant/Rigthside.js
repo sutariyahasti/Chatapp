@@ -8,13 +8,17 @@ import UseName from "@/public/images/UseName";
 import CreateChatRoomModal from "./CreateChatRoomModal";
 import CustomButton from "./common/CustomButton";
 import { notify } from "./common/Toast";
-import { database } from "@/firebase/firebase";
+import { database, storage } from "@/firebase/firebase";
 import { child, get, onValue, ref, remove, serverTimestamp } from "firebase/database";
 import addData from "@/firebase/utils/addData";
 import updateData from "@/firebase/utils/updateData";
 import { formatDate } from "../lib/FormatTime";
-import { FaEllipsisV } from "react-icons/fa";
-
+import { FaEllipsisV, FaTimesCircle } from "react-icons/fa";
+import {
+  getDownloadURL,
+  ref as storageRef,
+  uploadBytes,
+} from "firebase/storage";
 function RightSide({
   ChatRoomDetails,
   fetchChatRoomsById,
@@ -39,6 +43,7 @@ function RightSide({
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [showFaEllipsisV ,setShowFaEllipsisV] = useState(null)
+  const [image, setImage] = useState()
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -57,11 +62,11 @@ function RightSide({
 
     const dbRef = ref(database); // Reference to the root of your Realtime Database
     const messagesRef = child(dbRef, 'Messages');
-    
+
     // Set up a real-time listener
     const unsubscribe = onValue(messagesRef, (snapshot) => {
       const messages = snapshot.val();
-      
+
       // Process and set the messages
       const chatMessages = [];
       if (messages) {
@@ -71,8 +76,8 @@ function RightSide({
             chatMessages.push({ ...message, id: key });
           }
         });
-         // Sort messages by createdAt timestamp
-         chatMessages.sort((a, b) => a.createdAt - b.createdAt);
+        // Sort messages by createdAt timestamp
+        chatMessages.sort((a, b) => a.createdAt - b.createdAt);
       }
 
       setChats(chatMessages);
@@ -83,13 +88,12 @@ function RightSide({
     // Cleanup subscription on unmount
     return () => unsubscribe();
   }, [ChatRoomDetails]);
- 
-  
+
   function generateChatroomId(userId, id) {
     const timestamp = Date.now(); // Get the current timestamp
     // const randomValue = Math.random().toString(36).substring(2, 15); // Generate a random value
     return `${timestamp}`; // Combine all elements to form the unique ID
- }
+  }
   const createChatroom = async (id, name, url) => {
     const collection = 'Chatrooms';
     const chatroomId = generateChatroomId(userId, id) // Create a unique ID based on user IDs
@@ -130,43 +134,76 @@ function RightSide({
 
   const handleSendMessage = async () => {
     const randomValue = Math.random().toString(36).substring(2, 15);
+    const messageId = `${ChatRoomDetails?.id}_${randomValue}`;
     const timestamp = Date.now();
     const collection = "Chatrooms";
     const messagesCollection = "Messages";
-
-    // Create the message object
-    const message = {
-      chatRoom: ChatRoomDetails?.id,
-      sender: loginuser?._id || userId,
-      receiver: ChatRoomDetails?.user1 === userId
-        ? ChatRoomDetails?.user2
-        : ChatRoomDetails?.user1,
-      content: messages,
-      chatName: ChatRoomDetails?.chatName,
-      createdAt: timestamp
-    };
-    const messageId = `${ChatRoomDetails?.id}_${randomValue}`;
-    const chatroomId = `${ChatRoomDetails?.id}`
+    const chatroomId = `${ChatRoomDetails?.id}`;
+    let imageUrl = null;
+  
     try {
+      if (!ChatRoomDetails?.id || !userId) {
+        throw new Error("Missing required fields: ChatRoomDetails, loginuser, or messages.");
+      }
+  
+      if (image) {
+        const storageReference = storageRef(storage, `images/${messageId}/${image.name}`);
+        await uploadBytes(storageReference, image);
+        imageUrl = await getDownloadURL(storageReference);
+      }
+  
+      // Create the message object
+      const message = {
+        chatRoom: ChatRoomDetails.id,
+        sender: userId,
+        receiver: ChatRoomDetails.user1 === userId ? ChatRoomDetails.user2 : ChatRoomDetails.user1,
+        content: messages,
+        imageUrl: imageUrl,
+        chatName: ChatRoomDetails.chatName,
+        createdAt: timestamp
+      };
+  
       // Add the message to the Messages collection (or however you are storing messages)
       const { result, error } = await addData(messagesCollection, messageId, message);
-
-      if (error) throw new Error(error);
-
+  
+      if (error) {
+        throw new Error(`Failed to add message to ${messagesCollection}: ${error}`);
+      }
+  
       // Update the latestMessages field in the chatroom
       const chatroomUpdate = {
         latestMessages: message.content,
         createdAt: timestamp
       };
-
+  
       const { result: chatroomResult, error: chatroomError } = await updateData(collection, chatroomId, chatroomUpdate);
-      if (chatroomError) throw new Error(chatroomError);
-
+  
+      if (chatroomError) {
+        throw new Error(`Failed to update chatroom ${collection}: ${chatroomError}`,"error");
+      }
+  
       notify("Message sent");
       setMessages("");
+      setImage("");
+      setSelectedImage("");
+  
     } catch (error) {
       console.log("Error in sending message: ", error);
-      notify("Error in sending message");
+      notify(`Error in sending message: ${error.message}`,"error");
+    }
+  };
+  
+  const [selectedImage, setSelectedImage] = useState(null);
+  console.log(selectedImage, "selectedImage");
+  const handleImageChange = (event) => {
+    setImage(event.target.files[0]);
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -183,16 +220,15 @@ function RightSide({
     setDropdownOpen(!dropdownOpen);
   };
 
-  const handleChatDelet = async(id) => {
+  const handleChatDelet = async (id) => {
     try {
       await remove(ref(database, `Messages/${id}`));
       notify('Chat deleted successfully');
     } catch (error) {
-     notify('Error deleting chat :', "error");
-     console.log('Error deleting chat :', error);
+      notify('Error deleting chat :', "error");
+      console.log('Error deleting chat :', error);
     }
     setDropdownOpen(false);
-    
   };
   return (
     <>
@@ -212,7 +248,7 @@ function RightSide({
           {ChatRoomDetails && ChatRoomDetails.id ? (
             <>
               {/* ChatHeader */}
-              <div className="md:h-[12%] ">
+              <div className="md:h-[12%] lg:[12%] ">
                 <ChatHeader
                   ChatRoomDetails={ChatRoomDetails}
                   userId={userId}
@@ -222,7 +258,7 @@ function RightSide({
               </div>
 
               {/* chatwindow */}
-              <div className="flex flex-col-reverse justify-between  h-[80%] md:h-[76%] lg:h-[80%] overflow-auto no-scrollbar ">
+              <div className="flex flex-col-reverse justify-between  h-[80%] md:h-[82%] lg:h-[82%] overflow-auto no-scrollbar ">
                 <div className="flex flex-col mt-5">
                   <div className="w-full px-5 text-center justify-between"></div>
                   {chats &&
@@ -261,13 +297,12 @@ function RightSide({
                           <div
                             key={index}
                             className={`flex text-justify ${userId === msg?.sender
-                                ? "justify-end "
-                                : "justify-start "
+                              ? "justify-end "
+                              : "justify-start "
                               }`}
-                              onMouseLeave={()=>{setShowFaEllipsisV(null); setDropdownOpen(false)}}
+                            onMouseLeave={() => { setShowFaEllipsisV(null); setDropdownOpen(false) }}
 
                           >
-                          
                             {userId !== msg?.sender && (
                               <img
                                 src={ChatRoomDetails.user1url}
@@ -289,14 +324,24 @@ function RightSide({
                             )} */}
                               <div
                                 className={`py-0 px-0 m-0 ${userId === msg?.sender
-                                    ? "bg-[#0606063b] rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white flex flex-row"
-                                    : "bg-[#959595c7] rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black flex flex-row"
+                                  ? "bg-[#0606063b] rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white flex flex-row"
+                                  : "bg-[#959595c7] rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black flex flex-row"
                                   }`}
                               >
-                                <div className="m-1 p-2 lg:max-w-[400px] max-w-60 text-sm lg:text-base  break-words">
-                                  {msg?.content}
-                                </div>
-                                <span className="font-thin text-xs p-1 mt-4 mr-2">
+                                <div>
+                                {msg?.imageUrl &&
+                                  <img
+                                    src={msg.imageUrl}
+                                    className="object-cover h-[200px] w-[200px] rounded-3xl m-2  "
+                                    alt="🙂"
+                                  /> }
+                                  <div className={`flex flex-row  ${msg?.content ? "justify-between" : "justify-end"} align-middle `}>
+                                  {msg?.content && 
+                                  <div className="m-2 p-1 lg:max-w-[400px] max-w-60 text-sm lg:text-base  break-words">
+                                    {msg?.content}
+                                  </div>
+                                }
+                                <span className={`font-thin text-xs p-1  ${msg?.content ? "mb-3" : ""} text-end content-end`}>
                                   {`${msgDate.toLocaleTimeString("en-IN", {
                                     hour: "numeric",
                                     minute: "numeric",
@@ -304,7 +349,8 @@ function RightSide({
                                     timeZone: "Asia/Kolkata",
                                   })}`}
                                 </span>
-                             
+                                </div>
+                                </div>
                               </div>
                             </div>
                             {userId === msg?.sender && (
@@ -312,31 +358,31 @@ function RightSide({
                                 src={loginUserProfile}
                                 className="object-cover h-8 w-8 rounded-full m-1"
                                 alt="🙂"
-                                onMouseEnter={()=>{setShowFaEllipsisV(msg.id)}}
+                                onMouseEnter={() => { setShowFaEllipsisV(msg.id) }}
                               />
                             )}
-                               <div className={`relative ${userId === msg?.sender && showFaEllipsisV == msg.id ? "block" : "hidden"}`}>
-                                  <button
-                                    className="p-1"
-                                    onClick={() => {toggleDropdown()}}
-                                  >
-                                    {/* &#x2022;&#x2022;&#x2022; Three-dots symbol */}
-                                    <FaEllipsisV />
-                                  </button>
-                                  {dropdownOpen && (
-                                    <div className="absolute right-0 mt-2 inline-block w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                                      <div className="py-1">
-                                        <button
-                                          onClick={() => handleChatDelet(msg.id)}
-                                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                        >
-                                          delet chat
-                                        </button>
-                                        
-                                      </div>
-                                    </div>
-                                  )}
+                            <div className={`relative ${userId === msg?.sender && showFaEllipsisV == msg.id ? "block" : "hidden"}`}>
+                              <button
+                                className="p-1"
+                                onClick={() => { toggleDropdown() }}
+                              >
+                                {/* &#x2022;&#x2022;&#x2022; Three-dots symbol */}
+                                <FaEllipsisV />
+                              </button>
+                              {dropdownOpen && (
+                                <div className="absolute right-0 mt-2 inline-block w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                  <div className="py-1">
+                                    <button
+                                      onClick={() => handleChatDelet(msg.id)}
+                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+                                      Delet chat
+                                    </button>
+
+                                  </div>
                                 </div>
+                              )}
+                            </div>
                           </div>
                         </>
                       );
@@ -345,7 +391,16 @@ function RightSide({
               </div>
 
               {/* sendchat */}
-              <div className="md:h-[5%]  items-center text-center bg-[#a1999956]  rounded-xl p-0 px-1 mb-2 flex flex-row justify-center fixed bottom-7 w-[88%] lg:w-[77.4%]  ">
+              {selectedImage &&
+                <div className="bg-[#0606063b] rounded-xl relative">
+                  <div className=" absolute left-48" onClick={() => { setSelectedImage(null) }}><FaTimesCircle size={20} color="white" /></div>
+                  <img
+                    src={selectedImage}
+                    className="object-cover h-52 w-52 rounded-3xl m-2  "
+                    alt="🙂"
+                  />
+                </div>}
+              <div className="md:h-[6%] lg:h-[6%] items-center text-center bg-[#a1999956]  rounded-xl p-0 px-1 mt-3 flex flex-row justify-center  ">
                 <div className="relative flex-1 mr-2">
                   <span className="absolute inset-y-0 flex items-center">
                     <button
@@ -379,25 +434,35 @@ function RightSide({
                   />
                 </div>
                 <div className="relative flex-2 right-0 items-center inset-y-0 flex">
-                  <button
-                    type="button"
-                    className="hidden md:inline-flex m-1 p-2 text-white items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out border-2 bg-[#312e2e69] border-[#5a5269] hover:bg-gray-300 focus:outline-none"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-6 w-6 text-white hover:text-gray-600"
+                  <div>
+                    <label
+                      className="hidden md:inline-flex m-1 p-2 text-white items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out border-2 bg-[#312e2e69] border-[#5a5269] hover:bg-gray-300 focus:outline-none"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                      ></path>
-                    </svg>
-                  </button>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="z-20"
+                      />
+                      <div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          className="h-6 w-6 text-white hover:text-gray-600 z-30"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                          ></path>
+                        </svg>
+                      </div>
+
+                    </label>
+                  </div>
                   <button
                     type="button"
                     className="hidden md:inline-flex m-1 p-2 items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out bg-[#312e2e69] text-gray-500 hover:bg-gray-300 focus:outline-none"

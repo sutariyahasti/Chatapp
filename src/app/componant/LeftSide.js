@@ -183,7 +183,7 @@ const LeftSide = ({
           leftsideShow === true ? "block" : "hidden"
         }`}
       >
-        <div className="sticky top-0 flex rounded-xl items-center space-x-4 bg-blackbg text-white z-10 sm:items-center justify-between py-6 px-2 border-b-2 border-gray-200">
+        <div className="sticky h-[12%] top-0 flex rounded-xl items-center space-x-4 bg-blackbg text-white z-10 sm:items-center justify-between py-6 px-2 border-b-2 border-gray-200 my-1">
           <div className="relative h-15 w-15 rounded-full">
             {Profile ? (
               <img
@@ -222,7 +222,7 @@ const LeftSide = ({
             </button>
           </div>
         </div>
-        <div className="overflow-auto h-full">
+        <div className="overflow-auto h-[88%] ">
           {users &&
             users.length > 0 &&
             users.map((user, index) => (

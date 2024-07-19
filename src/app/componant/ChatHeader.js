@@ -11,7 +11,7 @@ const ChatHeader = ({
 }) => {
   return (
     <div className="">
-    <div className="flex sm:items-center md:fixed space-x-4 w-full lg:w-[77.4%] bg-blackbg z-[5] items-center rounded-xl  my-1 md:justify-between md:p-6 p-4 border-b-2 border-gray-200">
+    <div className="flex sm:items-center md:sticky space-x-4 w-full  bg-blackbg z-[5] items-center rounded-xl  my-1 md:justify-between md:p-6 p-4 border-b-2 border-gray-200">
 
       <div className="relative flex items-center space-x-4">
         <div className="lg:hidden block">

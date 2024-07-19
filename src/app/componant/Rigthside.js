@@ -242,7 +242,7 @@ function RightSide({
       <div className={`p-4 h-screen  lg:block ${rightsideShow === true ? "block" : "hidden"
         }`}>
         <div
-          className={`lg:flex flex-col h-full  p-3 rounded-xl  bg-[#cec6c63a] md:col-span-6 sm:col-span-6 no-scrollbar  ${rightsideShow === true ? "flex" : "hidden"
+          className={`lg:flex flex-col h-full py-10 px-3 md:p-3 rounded-xl  bg-[#cec6c63a] md:col-span-6 sm:col-span-6 no-scrollbar  ${rightsideShow === true ? "flex" : "hidden"
             }`}
         >
           {ChatRoomDetails && ChatRoomDetails.id ? (
